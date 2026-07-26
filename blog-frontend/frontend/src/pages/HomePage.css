@@ -1,0 +1,49 @@
+/* HomePage Responsive Styles */
+.home-page {
+  width: 100%;
+}
+
+.home-page .home-card {
+  animation: fadeUp 0.5s ease both;
+}
+
+@media (max-width: 768px) {
+  .home-page .home-logo-area {
+    margin-bottom: 16px;
+  }
+
+  .home-page .home-title {
+    letter-spacing: -0.02em;
+  }
+
+  .home-page .home-button-container {
+    gap: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-page .home-card {
+    border-radius: 12px;
+  }
+
+  .home-page .home-logo-area {
+    margin-bottom: 16px;
+  }
+
+  .home-page .home-btn {
+    min-height: 44px;
+    transition: all 0.2s;
+  }
+
+  .home-page .home-btn:active {
+    transform: scale(0.98);
+  }
+
+  .home-page .home-btn-student:active {
+    background: linear-gradient(135deg, #1f5235, #0d2620);
+  }
+
+  .home-page .home-btn-professor:active {
+    background: linear-gradient(135deg, #8b2b00, #4a1600);
+  }
+}

@@ -1,0 +1,529 @@
+/* ============================================================
+   MOBILE RESPONSIVE STYLES - BlogSchool
+   ============================================================ */
+
+/* ── Extra Small Devices (320px - 480px) ─────────────────── */
+@media (max-width: 480px) {
+  /* Root & Base */
+  :root {
+    --shadow: 0 1px 4px rgba(26, 22, 17, 0.06);
+    --shadow-lg: 0 4px 12px rgba(26, 22, 17, 0.1);
+  }
+
+  body {
+    font-size: 14px;
+  }
+
+  /* Dashboard Root */
+  .dash-root {
+    padding-bottom: 0;
+  }
+
+  /* Header */
+  .dash-header-inner {
+    padding: 12px 16px;
+    gap: 8px;
+  }
+
+  .dash-brand {
+    gap: 6px;
+  }
+
+  .dash-logo {
+    font-size: 18px;
+  }
+
+  .dash-title {
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .dash-user {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .user-badge {
+    font-size: 11px;
+    padding: 4px 10px;
+  }
+
+  .logout-btn {
+    font-size: 11px;
+    padding: 4px 10px;
+  }
+
+  /* Main Content */
+  .dash-main {
+    padding: 20px 16px 60px;
+    max-width: 100%;
+  }
+
+  /* Hero Section */
+  .dash-hero {
+    margin-bottom: 20px;
+  }
+
+  .teacher-hero {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .dash-welcome {
+    font-size: 20px;
+    margin: 0 0 4px;
+  }
+
+  .dash-welcome-sub {
+    font-size: 13px;
+  }
+
+  .new-post-btn {
+    width: 100%;
+    padding: 10px 16px;
+    font-size: 13px;
+    order: -1;
+  }
+
+  /* Search Bar */
+  .search-bar {
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .search-bar input {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+
+  .search-clear {
+    right: 14px;
+    top: 50%;
+  }
+
+  .search-btn {
+    width: 100%;
+    padding: 10px 16px;
+  }
+
+  /* Posts Grid */
+  .posts-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  /* Post Card */
+  .post-card {
+    padding: 16px;
+    gap: 8px;
+  }
+
+  .post-card-title {
+    font-size: 16px;
+  }
+
+  .post-card-excerpt {
+    font-size: 13px;
+  }
+
+  .post-card-meta {
+    gap: 8px;
+  }
+
+  .post-author {
+    font-size: 11px;
+  }
+
+  .post-date {
+    font-size: 10px;
+  }
+
+  .card-action-btn {
+    font-size: 11px;
+    padding: 5px 10px;
+  }
+
+  /* Post Count */
+  .post-count {
+    font-size: 11px;
+  }
+
+  /* States */
+  .dash-error {
+    padding: 12px 14px;
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+
+  .dash-loading {
+    padding: 40px 0;
+    gap: 12px;
+  }
+
+  .loader {
+    width: 28px;
+    height: 28px;
+  }
+
+  .dash-empty {
+    padding: 40px 0;
+  }
+
+  .dash-empty span {
+    font-size: 36px;
+    margin-bottom: 8px;
+  }
+
+  .dash-empty p {
+    font-size: 14px;
+  }
+
+  /* Modal Overlay */
+  .modal-overlay {
+    padding: 16px;
+  }
+
+  .modal-box {
+    max-width: 100%;
+    padding: 24px;
+    border-radius: 16px;
+  }
+
+  .modal-close {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+    top: 12px;
+    right: 12px;
+  }
+
+  /* Form */
+  .form-title {
+    font-size: 20px;
+    margin: 0 0 20px;
+  }
+
+  .form-field {
+    margin-bottom: 14px;
+  }
+
+  .form-field label {
+    font-size: 11px;
+  }
+
+  .form-field input,
+  .form-field textarea {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+
+  .form-actions {
+    gap: 8px;
+  }
+
+  .btn-cancel,
+  .btn-submit {
+    flex: 1;
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+
+  /* Toast */
+  .toast {
+    bottom: 16px;
+    right: 16px;
+    left: 16px;
+    padding: 12px 16px;
+    font-size: 13px;
+  }
+}
+
+/* ── Small Devices (481px - 768px) ──────────────────────── */
+@media (min-width: 481px) and (max-width: 768px) {
+  /* Dashboard Main */
+  .dash-main {
+    padding: 32px 20px 70px;
+    max-width: 100%;
+  }
+
+  /* Header */
+  .dash-header-inner {
+    padding: 14px 20px;
+  }
+
+  .dash-title {
+    font-size: 18px;
+  }
+
+  .user-badge {
+    font-size: 12px;
+    padding: 5px 11px;
+  }
+
+  .logout-btn {
+    font-size: 12px;
+    padding: 5px 11px;
+  }
+
+  /* Hero */
+  .teacher-hero {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dash-welcome {
+    font-size: 24px;
+  }
+
+  .dash-welcome-sub {
+    font-size: 14px;
+  }
+
+  .new-post-btn {
+    width: 100%;
+    order: -1;
+  }
+
+  /* Search */
+  .search-bar {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .search-bar input,
+  .search-btn {
+    width: 100%;
+  }
+
+  .search-clear {
+    right: 14px;
+  }
+
+  /* Posts Grid */
+  .posts-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px;
+  }
+
+  /* Post Card */
+  .post-card {
+    padding: 18px;
+  }
+
+  .post-card-title {
+    font-size: 17px;
+  }
+
+  .post-card-excerpt {
+    font-size: 13px;
+  }
+
+  /* Modal */
+  .modal-box {
+    max-width: 95%;
+    padding: 32px;
+  }
+
+  /* Form */
+  .form-title {
+    font-size: 22px;
+  }
+
+  .form-field input,
+  .form-field textarea {
+    padding: 11px 14px;
+  }
+}
+
+/* ── Login & HomePage Mobile ────────────────────────────── */
+@media (max-width: 480px) {
+  /* Login Card */
+  .login-card {
+    max-width: 100%;
+    width: 95%;
+    padding: 28px 20px;
+    border-radius: 16px;
+  }
+
+  .login-header {
+    margin-bottom: 24px;
+  }
+
+  .login-logo {
+    font-size: 32px;
+    margin-bottom: 8px;
+  }
+
+  .login-title {
+    font-size: 24px;
+    margin: 0 0 6px;
+  }
+
+  .login-sub {
+    font-size: 13px;
+  }
+
+  /* Role Grid */
+  .role-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .role-btn {
+    padding: 18px 14px;
+    gap: 6px;
+  }
+
+  .role-icon {
+    font-size: 28px;
+  }
+
+  .role-label {
+    font-size: 14px;
+  }
+
+  .role-desc {
+    font-size: 10px;
+  }
+
+  /* Form Fields */
+  .field {
+    gap: 5px;
+  }
+
+  .field label {
+    font-size: 11px;
+  }
+
+  .field input {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+
+  .hint {
+    font-size: 10px;
+  }
+
+  .login-error {
+    font-size: 12px;
+    padding: 8px 12px;
+  }
+
+  .login-submit {
+    padding: 12px;
+    font-size: 14px;
+    margin-top: 2px;
+  }
+
+  .back-btn {
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+
+  /* Background Animation */
+  .login-bg-word {
+    font-size: clamp(40px, 10vw, 100px);
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .login-card {
+    max-width: 100%;
+    padding: 36px 28px;
+    border-radius: 18px;
+  }
+
+  .login-title {
+    font-size: 28px;
+  }
+
+  .role-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .login-bg-word {
+    font-size: clamp(50px, 12vw, 120px);
+  }
+}
+
+/* ── HomePage Mobile ────────────────────────────────────── */
+@media (max-width: 480px) {
+  .home-card {
+    max-width: 95%;
+    padding: 24px 16px;
+  }
+
+  .home-title {
+    font-size: 24px;
+  }
+
+  .home-subtitle {
+    font-size: 12px;
+  }
+
+  .home-intro {
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+
+  .home-button-container {
+    gap: 12px;
+  }
+
+  .home-btn {
+    padding: 18px;
+    gap: 6px;
+  }
+
+  .home-btn-icon {
+    font-size: 32px;
+  }
+
+  .home-btn-label {
+    font-size: 14px;
+  }
+
+  .home-btn-subtext {
+    font-size: 11px;
+  }
+
+  .home-footer {
+    font-size: 11px;
+    margin-top: 8px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .home-card {
+    max-width: 100%;
+    padding: 32px 24px;
+  }
+
+  .home-title {
+    font-size: 26px;
+  }
+}
+
+/* ── Utilities ──────────────────────────────────────────── */
+@media (max-width: 768px) {
+  /* Better touch targets */
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  textarea {
+    min-height: 44px;
+  }
+
+  /* Better spacing */
+  .divider {
+    margin: 16px 0;
+  }
+}

@@ -23,6 +23,59 @@
   box-shadow: 0 12px 32px rgba(0,0,0,0.3);
 }
 
+/* ─────────────────────────────────────────────────────── */
+/* RESPONSIVE ADJUSTMENTS                                 */
+/* ─────────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .post-card {
+    padding: 18px;
+  }
+
+  .post-card-title {
+    font-size: 16px;
+  }
+
+  .post-card-excerpt {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .post-card {
+    padding: 14px;
+    gap: 8px;
+  }
+
+  .post-card-title {
+    font-size: 15px;
+    line-height: 1.4;
+  }
+
+  .post-card-excerpt {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .post-card-meta {
+    gap: 6px;
+  }
+
+  .post-author {
+    font-size: 11px;
+  }
+
+  .post-date {
+    font-size: 10px;
+  }
+
+  .card-action-btn {
+    font-size: 11px;
+    padding: 5px 10px;
+    min-height: 32px;
+  }
+}
+
 .post-card-meta {
   display: flex;
   justify-content: space-between;

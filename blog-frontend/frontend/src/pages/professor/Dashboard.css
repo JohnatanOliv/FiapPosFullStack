@@ -368,3 +368,256 @@
 }
 .btn-submit:hover:not(:disabled) { filter: brightness(1.1); transform: translateY(-1px); }
 .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ─────────────────────────────────────────────────────── */
+/* RESPONSIVE ADJUSTMENTS                                 */
+/* ─────────────────────────────────────────────────────── */
+
+/* Tablets & Small Devices */
+@media (max-width: 768px) {
+  .dash-header-inner {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .dash-main {
+    padding: 28px 18px 60px;
+  }
+
+  .dash-welcome {
+    font-size: clamp(20px, 5vw, 32px);
+  }
+
+  .new-post-btn {
+    width: 100%;
+  }
+
+  .search-bar {
+    flex-direction: column;
+  }
+
+  .search-bar input,
+  .search-btn {
+    width: 100%;
+  }
+
+  .posts-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+  }
+
+  .modal-box {
+    max-width: 95vw;
+    padding: 32px;
+  }
+}
+
+/* Mobile Devices */
+@media (max-width: 480px) {
+  .dash-header-inner {
+    padding: 12px 14px;
+  }
+
+  .dash-brand {
+    gap: 6px;
+  }
+
+  .dash-logo {
+    font-size: 18px;
+  }
+
+  .dash-title {
+    font-size: 15px;
+  }
+
+  .dash-user {
+    gap: 8px;
+  }
+
+  .user-badge {
+    font-size: 11px;
+    padding: 4px 10px;
+  }
+
+  .logout-btn {
+    font-size: 11px;
+    padding: 4px 10px;
+  }
+
+  .dash-main {
+    padding: 16px 12px 50px;
+  }
+
+  .dash-hero {
+    margin-bottom: 16px;
+  }
+
+  .teacher-hero {
+    flex-direction: column;
+  }
+
+  .dash-welcome {
+    font-size: 18px;
+    margin-bottom: 2px;
+  }
+
+  .dash-welcome-sub {
+    font-size: 13px;
+  }
+
+  .new-post-btn {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+
+  .search-bar {
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .search-bar input {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+
+  .search-btn {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .search-clear {
+    right: 12px;
+  }
+
+  .posts-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .post-count {
+    font-size: 11px;
+    margin-bottom: 12px;
+  }
+
+  .dash-error {
+    padding: 10px 12px;
+    font-size: 12px;
+    margin-bottom: 12px;
+  }
+
+  .dash-loading {
+    padding: 30px 0;
+    gap: 10px;
+  }
+
+  .loader {
+    width: 24px;
+    height: 24px;
+    border-width: 2px;
+  }
+
+  .dash-empty {
+    padding: 30px 0;
+  }
+
+  .dash-empty span {
+    font-size: 32px;
+  }
+
+  .dash-empty p {
+    font-size: 13px;
+  }
+
+  .modal-overlay {
+    padding: 12px;
+  }
+
+  .modal-box {
+    max-width: 100%;
+    padding: 20px;
+    border-radius: 14px;
+  }
+
+  .modal-close {
+    width: 28px;
+    height: 28px;
+    top: 10px;
+    right: 10px;
+  }
+
+  .form-title {
+    font-size: 18px;
+    margin-bottom: 16px;
+  }
+
+  .form-field {
+    margin-bottom: 12px;
+  }
+
+  .form-field label {
+    font-size: 11px;
+  }
+
+  .form-field input,
+  .form-field textarea {
+    padding: 10px 10px;
+    font-size: 14px;
+    min-height: 44px;
+  }
+
+  .form-actions {
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .btn-cancel,
+  .btn-submit {
+    flex: 1;
+    padding: 10px 12px;
+    font-size: 13px;
+    min-height: 44px;
+  }
+
+  .toast {
+    bottom: 12px;
+    right: 12px;
+    left: 12px;
+    padding: 10px 14px;
+    font-size: 12px;
+  }
+}
+
+/* Small Tablets (481px - 768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+  .dash-main {
+    padding: 24px 16px 60px;
+  }
+
+  .dash-title {
+    font-size: 17px;
+  }
+
+  .dash-welcome {
+    font-size: 22px;
+  }
+
+  .posts-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  }
+
+  .post-card {
+    padding: 16px;
+  }
+
+  .post-card-title {
+    font-size: 15px;
+  }
+
+  .modal-box {
+    padding: 28px;
+  }
+}
