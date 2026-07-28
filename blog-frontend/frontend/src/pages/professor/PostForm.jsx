@@ -70,11 +70,9 @@ const styles = {
   authorInfo: {
     padding: "12px",
     marginBottom: "16px",
-    background: "rgba(193, 68, 14, 0.1)",
     background: "rgba(255, 255, 255, 0.1)",
     borderRadius: "var(--radius)",
     fontSize: "13px",
-    color: "var(--ink)",
     color: "rgb(111, 111, 111)",
     fontWeight: 500,
   },
