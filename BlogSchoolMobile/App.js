@@ -20,48 +20,20 @@ const Stack = createNativeStackNavigator();
 function AppStack() {
   return (
     <Stack.Navigator
+      initialRouteName="StudentLogin"
       screenOptions={{
         headerShown: false,
-        cardStyle: { backgroundColor: colors.bg },
         animationEnabled: true,
         gestureEnabled: true,
       }}
     >
-      <Stack.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{ animationEnabled: false }}
-      />
-      <Stack.Screen
-        name="StudentLogin"
-        component={StudentLoginScreen}
-        options={{ animationTypeForReplace: 'fade' }}
-      />
-      <Stack.Screen
-        name="StudentDashboard"
-        component={StudentDashboardScreen}
-        options={{ animationTypeForReplace: 'fade' }}
-      />
-      <Stack.Screen
-        name="TeacherLogin"
-        component={TeacherLoginScreen}
-        options={{ animationTypeForReplace: 'fade' }}
-      />
-      <Stack.Screen
-        name="TeacherDashboard"
-        component={TeacherDashboardScreen}
-        options={{ animationTypeForReplace: 'fade' }}
-      />
-      <Stack.Screen
-        name="PostDetails"
-        component={PostDetailsScreen}
-        options={{ animationTypeForReplace: 'fade' }}
-      />
-      <Stack.Screen
-        name="ManageUsers"
-        component={ManageUsersScreen}
-        options={{ animationTypeForReplace: 'fade' }}
-      />
+      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="StudentLogin" component={StudentLoginScreen} />
+      <Stack.Screen name="StudentDashboard" component={StudentDashboardScreen} />
+      <Stack.Screen name="TeacherLogin" component={TeacherLoginScreen} />
+      <Stack.Screen name="TeacherDashboard" component={TeacherDashboardScreen} />
+      <Stack.Screen name="PostDetails" component={PostDetailsScreen} />
+      <Stack.Screen name="ManageUsers" component={ManageUsersScreen} />
     </Stack.Navigator>
   );
 }
@@ -71,7 +43,7 @@ export default function App() {
     <UserProvider>
       <NavigationContainer>
         <AppStack />
-        <StatusBar barStyle="light-content" backgroundColor={colors.bg} />
+        <StatusBar style="light" backgroundColor={colors.bg} />
       </NavigationContainer>
     </UserProvider>
   );

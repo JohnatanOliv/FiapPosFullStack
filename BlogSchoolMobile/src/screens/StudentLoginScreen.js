@@ -12,6 +12,7 @@ import { spacing, radius } from '../styles/spacing';
 import { typography } from '../styles/typography';
 import { UserContext } from '../context/UserContext';
 import { api } from '../services/api';
+import AppLoading from '../components/AppLoading';
 
 export default function StudentLoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -55,7 +56,10 @@ export default function StudentLoginScreen({ navigation }) {
           placeholder="aluno@email.com"
           placeholderTextColor={colors.inkMuted}
           value={email}
-          onChangeText={(value) => { setEmail(value); setError(''); }}
+          onChangeText={(value) => {
+            setEmail(value);
+            setError('');
+          }}
           autoCapitalize="none"
         />
 
@@ -65,7 +69,10 @@ export default function StudentLoginScreen({ navigation }) {
           placeholder="Digite sua senha"
           placeholderTextColor={colors.inkMuted}
           value={password}
-          onChangeText={(value) => { setPassword(value); setError(''); }}
+          onChangeText={(value) => {
+            setPassword(value);
+            setError('');
+          }}
           secureTextEntry
         />
 
@@ -74,6 +81,8 @@ export default function StudentLoginScreen({ navigation }) {
         <TouchableOpacity style={styles.submitBtn} onPress={handleSubmit} disabled={loading}>
           <Text style={styles.submitText}>{loading ? 'Entrando...' : 'Entrar'}</Text>
         </TouchableOpacity>
+
+        {loading ? <AppLoading message="Validando acesso..." /> : null}
 
         <TouchableOpacity onPress={() => navigation.replace('Home')}>
           <Text style={styles.backBtn}>Voltar</Text>

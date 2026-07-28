@@ -18,7 +18,8 @@ const initialForm = { name: '', email: '', password: '' };
 
 export default function ManageUsersScreen({ route }) {
   const { token } = useContext(UserContext);
-  const { role } = route.params;
+  const role = route?.params?.role || 'student';
+
   const [items, setItems] = useState([]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -56,10 +57,19 @@ export default function ManageUsersScreen({ route }) {
     setError('');
     try {
       const response = await service.list(nextPage, q);
-      setItems(response.data);
-      setPagination(response.pagination);
+
+      const dataList = response?.data?.data ?? response?.data ?? [];
+      const pageInfo =
+        response?.data?.pagination ??
+        response?.pagination ??
+        { page: nextPage, totalPages: 1 };
+
+      setItems(Array.isArray(dataList) ? dataList : []);
+      setPagination(pageInfo);
     } catch (err) {
-      setError(err.message);
+      setItems([]);
+      setPagination({ page: 1, totalPages: 1 });
+      setError(err?.message || 'Falha ao carregar dados.');
     }
   };
 
@@ -73,7 +83,7 @@ export default function ManageUsersScreen({ route }) {
       if (editing) {
         const payload = { name: form.name, email: form.email };
         if (form.password.trim()) payload.password = form.password.trim();
-        await service.update(editing.id, payload);
+        await service.update(editing.id || editing._id, payload);
       } else {
         await service.create(form);
       }
@@ -81,7 +91,7 @@ export default function ManageUsersScreen({ route }) {
       setForm(initialForm);
       await load(page, search);
     } catch (err) {
-      setError(err.message);
+      setError(err?.message || 'Falha ao salvar.');
     }
   };
 
@@ -147,32 +157,35 @@ export default function ManageUsersScreen({ route }) {
 
         {error ? <Text style={styles.error}>{error}</Text> : null}
 
-        {items.map((item) => (
-          <View key={item.id} style={styles.card}>
-            <Text style={styles.name}>{item.name}</Text>
-            <Text style={styles.email}>{item.email}</Text>
-            <View style={styles.actions}>
-              <TouchableOpacity
-                style={styles.btnGhost}
-                onPress={() => {
-                  setEditing(item);
-                  setForm({ name: item.name, email: item.email, password: '' });
-                }}
-              >
-                <Text style={styles.btnGhostText}>Editar</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.btnGhost}
-                onPress={async () => {
-                  await service.remove(item.id);
-                  load(page, search);
-                }}
-              >
-                <Text style={styles.btnGhostText}>Excluir</Text>
-              </TouchableOpacity>
+        {items.map((item, index) => {
+          const itemId = item.id || item._id || `item-${index}`;
+          return (
+            <View key={itemId} style={styles.card}>
+              <Text style={styles.name}>{item.name}</Text>
+              <Text style={styles.email}>{item.email}</Text>
+              <View style={styles.actions}>
+                <TouchableOpacity
+                  style={styles.btnGhost}
+                  onPress={() => {
+                    setEditing(item);
+                    setForm({ name: item.name, email: item.email, password: '' });
+                  }}
+                >
+                  <Text style={styles.btnGhostText}>Editar</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.btnGhost}
+                  onPress={async () => {
+                    await service.remove(itemId);
+                    load(page, search);
+                  }}
+                >
+                  <Text style={styles.btnGhostText}>Excluir</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
-        ))}
+          );
+        })}
 
         <View style={styles.actions}>
           <TouchableOpacity
@@ -186,9 +199,11 @@ export default function ManageUsersScreen({ route }) {
           >
             <Text style={styles.btnGhostText}>Anterior</Text>
           </TouchableOpacity>
+
           <Text style={styles.pageInfo}>
             Página {pagination.page} de {pagination.totalPages}
           </Text>
+
           <TouchableOpacity
             style={styles.btnGhost}
             disabled={pagination.page >= pagination.totalPages}
@@ -261,7 +276,7 @@ const styles = StyleSheet.create({
   name: { color: colors.ink, fontWeight: '700' },
   email: { color: colors.inkMuted, marginTop: spacing.xs },
 
-  actions: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginTop: spacing.sm },
+  actions: { flexDirection: 'row', alignItems: 'center', marginTop: spacing.sm },
 
   btnGhost: {
     borderWidth: 1,
@@ -269,6 +284,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.md,
+    marginRight: spacing.sm,
   },
   btnGhostText: { color: colors.inkMuted },
 
