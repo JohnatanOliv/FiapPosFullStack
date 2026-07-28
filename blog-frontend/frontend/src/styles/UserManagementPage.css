@@ -1,0 +1,136 @@
+.user-mgmt-page {
+    min-height: 100vh;
+    padding: clamp(16px, 4vw, 28px);
+    background: var(--bg);
+    position: relative;
+    overflow: hidden;
+    color: var(--ink);
+}
+
+.user-mgmt-decor-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+}
+
+.user-mgmt-bg-pattern {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(193, 68, 14, 0.06) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
+}
+
+.user-mgmt-card {
+    position: relative;
+    z-index: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    padding: clamp(14px, 3vw, 20px);
+    margin: 0 auto 16px;
+    max-width: 980px;
+}
+
+.user-mgmt-title {
+    font-family: var(--font-display);
+    font-size: clamp(22px, 4vw, 30px);
+}
+
+.user-mgmt-subtitle {
+    color: var(--ink-muted);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    font-size: 12px;
+    margin-top: 6px;
+}
+
+.user-mgmt-section-title {
+    margin-bottom: 12px;
+}
+
+.user-mgmt-search {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+}
+
+.user-mgmt-input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--ink);
+    padding: 10px 12px;
+    margin-bottom: 10px;
+}
+
+.user-mgmt-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+.user-mgmt-btn {
+    border: none;
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    transition: all .2s;
+}
+
+.user-mgmt-btn-primary {
+    color: #fff;
+    background: linear-gradient(135deg, #c1440e, #7f2704);
+}
+
+.user-mgmt-btn-ghost {
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--ink-muted);
+}
+
+.theme-student .user-mgmt-btn-primary {
+    background: linear-gradient(135deg, #2d6a4f, #1b4332);
+}
+
+.user-mgmt-btn:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+.user-mgmt-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.user-mgmt-table th,
+.user-mgmt-table td {
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    padding: 10px 4px;
+}
+
+.user-mgmt-muted {
+    color: var(--ink-muted);
+}
+
+.user-mgmt-error {
+    color: var(--accent);
+    margin-bottom: 12px;
+}
+
+@media (max-width: 768px) {
+    .user-mgmt-search {
+        grid-template-columns: 1fr;
+    }
+
+    .user-mgmt-table {
+        font-size: 14px;
+    }
+}

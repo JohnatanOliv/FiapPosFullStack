@@ -27,25 +27,30 @@ export default function ManageUsersScreen({ route }) {
   const [form, setForm] = useState(initialForm);
   const [error, setError] = useState('');
 
-  const labels = useMemo(() => (
-    role === 'teacher'
-      ? { singular: 'Professor', plural: 'Professores' }
-      : { singular: 'Aluno', plural: 'Alunos' }
-  ), [role]);
+  const labels = useMemo(
+    () =>
+      role === 'teacher'
+        ? { singular: 'Professor', plural: 'Professores' }
+        : { singular: 'Aluno', plural: 'Alunos' },
+    [role],
+  );
 
-  const service = role === 'teacher'
-    ? {
-      list: (pageValue, q) => api.listTeachers(token, pageValue, q),
-      create: (payload) => api.createTeacher(payload, token),
-      update: (id, payload) => api.updateTeacher(id, payload, token),
-      remove: (id) => api.deleteTeacher(id, token),
-    }
-    : {
-      list: (pageValue, q) => api.listStudents(token, pageValue, q),
-      create: (payload) => api.createStudent(payload, token),
-      update: (id, payload) => api.updateStudent(id, payload, token),
-      remove: (id) => api.deleteStudent(id, token),
-    };
+  const service =
+    role === 'teacher'
+      ? {
+        list: (pageValue, q) => api.listTeachers(token, pageValue, q),
+        create: (payload) => api.createTeacher(payload, token),
+        update: (id, payload) => api.updateTeacher(id, payload, token),
+        remove: (id) => api.deleteTeacher(id, token),
+      }
+      : {
+        list: (pageValue, q) => api.listStudents(token, pageValue, q),
+        create: (payload) => api.createStudent(payload, token),
+        update: (id, payload) => api.updateStudent(id, payload, token),
+        remove: (id) => api.deleteStudent(id, token),
+      };
+
+  const primaryColor = role === 'teacher' ? colors.accentRed : colors.accentGreen;
 
   const load = async (nextPage = page, q = search) => {
     setError('');
@@ -83,7 +88,14 @@ export default function ManageUsersScreen({ route }) {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.title}>{labels.plural}</Text>
+        <View style={styles.header}>
+          <Text style={styles.logo}>{role === 'teacher' ? '👨‍🏫' : '👨‍🎓'}</Text>
+          <Text style={styles.title}>{labels.plural}</Text>
+          <Text style={styles.subtitle}>Gerenciamento da turma</Text>
+        </View>
+
+        <View style={styles.divider} />
+
         <TextInput
           style={styles.input}
           value={search}
@@ -91,12 +103,20 @@ export default function ManageUsersScreen({ route }) {
           placeholder={`Buscar ${labels.plural.toLowerCase()}...`}
           placeholderTextColor={colors.inkMuted}
         />
-        <TouchableOpacity style={styles.btn} onPress={() => { setPage(1); load(1, search); }}>
+        <TouchableOpacity
+          style={[styles.btn, { backgroundColor: primaryColor }]}
+          onPress={() => {
+            setPage(1);
+            load(1, search);
+          }}
+        >
           <Text style={styles.btnText}>Buscar</Text>
         </TouchableOpacity>
 
         <View style={styles.card}>
-          <Text style={styles.sectionTitle}>{editing ? `Editar ${labels.singular}` : `Novo ${labels.singular}`}</Text>
+          <Text style={styles.sectionTitle}>
+            {editing ? `Editar ${labels.singular}` : `Novo ${labels.singular}`}
+          </Text>
           <TextInput
             style={styles.input}
             value={form.name}
@@ -120,7 +140,7 @@ export default function ManageUsersScreen({ route }) {
             placeholderTextColor={colors.inkMuted}
             secureTextEntry
           />
-          <TouchableOpacity style={styles.btn} onPress={submit}>
+          <TouchableOpacity style={[styles.btn, { backgroundColor: primaryColor }]} onPress={submit}>
             <Text style={styles.btnText}>{editing ? 'Salvar' : 'Cadastrar'}</Text>
           </TouchableOpacity>
         </View>
@@ -141,7 +161,13 @@ export default function ManageUsersScreen({ route }) {
               >
                 <Text style={styles.btnGhostText}>Editar</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.btnGhost} onPress={async () => { await service.remove(item.id); load(page, search); }}>
+              <TouchableOpacity
+                style={styles.btnGhost}
+                onPress={async () => {
+                  await service.remove(item.id);
+                  load(page, search);
+                }}
+              >
                 <Text style={styles.btnGhostText}>Excluir</Text>
               </TouchableOpacity>
             </View>
@@ -160,7 +186,9 @@ export default function ManageUsersScreen({ route }) {
           >
             <Text style={styles.btnGhostText}>Anterior</Text>
           </TouchableOpacity>
-          <Text style={styles.pageInfo}>Página {pagination.page} de {pagination.totalPages}</Text>
+          <Text style={styles.pageInfo}>
+            Página {pagination.page} de {pagination.totalPages}
+          </Text>
           <TouchableOpacity
             style={styles.btnGhost}
             disabled={pagination.page >= pagination.totalPages}
@@ -180,9 +208,30 @@ export default function ManageUsersScreen({ route }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
-  content: { padding: spacing.lg },
-  title: { color: colors.ink, fontSize: typography.sizes['2xl'], fontWeight: '700', marginBottom: spacing.md },
+  content: { padding: spacing.lg, paddingBottom: spacing['3xl'] },
+
+  header: { alignItems: 'center', marginBottom: spacing.lg },
+  logo: { fontSize: 42, marginBottom: spacing.sm },
+  title: {
+    color: colors.ink,
+    fontSize: typography.sizes['3xl'],
+    fontWeight: '700',
+  },
+  subtitle: {
+    color: colors.inkMuted,
+    fontSize: typography.sizes.xs,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    marginTop: spacing.xs,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: colors.border,
+    marginBottom: spacing.lg,
+  },
+
   sectionTitle: { color: colors.ink, marginBottom: spacing.sm, fontWeight: '700' },
+
   input: {
     backgroundColor: colors.surface2,
     borderWidth: 1,
@@ -192,25 +241,28 @@ const styles = StyleSheet.create({
     padding: spacing.md,
     marginBottom: spacing.sm,
   },
+
   btn: {
-    backgroundColor: colors.ink,
     borderRadius: radius.md,
     padding: spacing.md,
     alignItems: 'center',
     marginBottom: spacing.sm,
   },
   btnText: { color: '#fff', fontWeight: '700' },
+
   card: {
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: radius.md,
+    borderRadius: radius.lg,
     padding: spacing.md,
     marginBottom: spacing.sm,
   },
   name: { color: colors.ink, fontWeight: '700' },
   email: { color: colors.inkMuted, marginTop: spacing.xs },
+
   actions: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginTop: spacing.sm },
+
   btnGhost: {
     borderWidth: 1,
     borderColor: colors.border,
@@ -219,6 +271,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
   },
   btnGhostText: { color: colors.inkMuted },
+
   pageInfo: { color: colors.inkMuted },
   error: { color: colors.error, marginBottom: spacing.sm },
 });

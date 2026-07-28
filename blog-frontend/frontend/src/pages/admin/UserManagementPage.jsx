@@ -1,9 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { api } from "../../services/api";
+import "../../styles/UserManagementPage.css";
 
 const emptyForm = { name: "", email: "", password: "" };
 
 export default function UserManagementPage({ role }) {
+  const navigate = useNavigate();
+
   const [items, setItems] = useState([]);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -19,21 +23,23 @@ export default function UserManagementPage({ role }) {
       : { singular: "Aluno", plural: "Alunos" };
   }, [role]);
 
-  const apiRole = useMemo(() => (
-    role === "teacher"
-      ? {
-        list: api.listTeachers,
-        create: api.createTeacher,
-        update: api.updateTeacher,
-        remove: api.deleteTeacher,
-      }
-      : {
-        list: api.listStudents,
-        create: api.createStudent,
-        update: api.updateStudent,
-        remove: api.deleteStudent,
-      }
-  ), [role]);
+  const apiRole = useMemo(
+    () =>
+      role === "teacher"
+        ? {
+          list: api.listTeachers,
+          create: api.createTeacher,
+          update: api.updateTeacher,
+          remove: api.deleteTeacher,
+        }
+        : {
+          list: api.listStudents,
+          create: api.createStudent,
+          update: api.updateStudent,
+          remove: api.deleteStudent,
+        },
+    [role]
+  );
 
   const load = async (nextPage = page, nextSearch = search) => {
     setLoading(true);
@@ -64,9 +70,7 @@ export default function UserManagementPage({ role }) {
         if (!active) return;
         setError(err.response?.data?.message || `Falha ao carregar ${labels.plural.toLowerCase()}.`);
       } finally {
-        if (active) {
-          setLoading(false);
-        }
+        if (active) setLoading(false);
       }
     };
 
@@ -118,20 +122,35 @@ export default function UserManagementPage({ role }) {
   };
 
   return (
-    <div style={styles.wrapper}>
-      <h1 style={styles.title}>{labels.plural}</h1>
+    <div className={`user-mgmt-page ${role === "teacher" ? "theme-teacher" : "theme-student"}`}>
+      <div className="user-mgmt-decor-line" />
+      <div className="user-mgmt-bg-pattern" aria-hidden="true" />
 
-      <form onSubmit={submit} style={styles.card}>
-        <h2>{editing ? `Editar ${labels.singular}` : `Criar ${labels.singular}`}</h2>
+      <div className="user-mgmt-card user-mgmt-header">
+        <button
+          type="button"
+          className="user-mgmt-btn user-mgmt-btn-ghost"
+          onClick={() => navigate(-1)}
+          style={{ marginBottom: 12 }}
+        >
+          ← Voltar
+        </button>
+
+        <h1 className="user-mgmt-title">{labels.plural}</h1>
+        <p className="user-mgmt-subtitle">Gerenciamento de {labels.plural.toLowerCase()}</p>
+      </div>
+
+      <form onSubmit={submit} className="user-mgmt-card">
+        <h2 className="user-mgmt-section-title">{editing ? `Editar ${labels.singular}` : `Criar ${labels.singular}`}</h2>
         <input
-          style={styles.input}
+          className="user-mgmt-input"
           placeholder="Nome"
           value={form.name}
           onChange={(e) => setForm((old) => ({ ...old, name: e.target.value }))}
           required
         />
         <input
-          style={styles.input}
+          className="user-mgmt-input"
           placeholder="Email"
           type="email"
           value={form.email}
@@ -139,22 +158,26 @@ export default function UserManagementPage({ role }) {
           required
         />
         <input
-          style={styles.input}
+          className="user-mgmt-input"
           placeholder={editing ? "Nova senha (opcional)" : "Senha"}
           type="password"
           value={form.password}
           onChange={(e) => setForm((old) => ({ ...old, password: e.target.value }))}
           required={!editing}
         />
-        <div style={styles.row}>
-          <button style={styles.button} type="submit">
+
+        <div className="user-mgmt-row">
+          <button className="user-mgmt-btn user-mgmt-btn-primary" type="submit">
             {editing ? "Salvar alterações" : "Cadastrar"}
           </button>
           {editing && (
             <button
-              style={styles.buttonGhost}
+              className="user-mgmt-btn user-mgmt-btn-ghost"
               type="button"
-              onClick={() => { setEditing(null); setForm(emptyForm); }}
+              onClick={() => {
+                setEditing(null);
+                setForm(emptyForm);
+              }}
             >
               Cancelar
             </button>
@@ -162,40 +185,55 @@ export default function UserManagementPage({ role }) {
         </div>
       </form>
 
-      <form onSubmit={searchSubmit} style={styles.search}>
+      <form onSubmit={searchSubmit} className="user-mgmt-card user-mgmt-search">
         <input
-          style={styles.input}
+          className="user-mgmt-input"
           value={search}
           placeholder={`Buscar ${labels.plural.toLowerCase()}...`}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <button style={styles.button} type="submit">Buscar</button>
+        <button className="user-mgmt-btn user-mgmt-btn-primary" type="submit">
+          Buscar
+        </button>
       </form>
 
-      {error && <p style={styles.error}>{error}</p>}
+      {error && <p className="user-mgmt-error">{error}</p>}
+
       {loading ? (
-        <p style={styles.muted}>Carregando...</p>
+        <p className="user-mgmt-muted">Carregando...</p>
       ) : (
-        <div style={styles.card}>
+        <div className="user-mgmt-card">
           {items.length === 0 ? (
-            <p style={styles.muted}>Nenhum registro encontrado.</p>
+            <p className="user-mgmt-muted">Nenhum registro encontrado.</p>
           ) : (
-            <table style={styles.table}>
+            <table className="user-mgmt-table">
               <thead>
                 <tr>
-                  <th style={styles.th}>Nome</th>
-                  <th style={styles.th}>Email</th>
-                  <th style={styles.th}>Ações</th>
+                  <th>Nome</th>
+                  <th>Email</th>
+                  <th>Ações</th>
                 </tr>
               </thead>
               <tbody>
                 {items.map((item) => (
                   <tr key={item.id}>
-                    <td style={styles.td}>{item.name}</td>
-                    <td style={styles.td}>{item.email}</td>
-                    <td style={styles.td}>
-                      <button style={styles.buttonGhost} onClick={() => editItem(item)}>Editar</button>
-                      <button style={styles.buttonGhost} onClick={() => removeItem(item.id)}>Excluir</button>
+                    <td>{item.name}</td>
+                    <td>{item.email}</td>
+                    <td>
+                      <button
+                        type="button"
+                        className="user-mgmt-btn user-mgmt-btn-ghost"
+                        onClick={() => editItem(item)}
+                      >
+                        Editar
+                      </button>
+                      <button
+                        type="button"
+                        className="user-mgmt-btn user-mgmt-btn-ghost"
+                        onClick={() => removeItem(item.id)}
+                      >
+                        Excluir
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -203,9 +241,10 @@ export default function UserManagementPage({ role }) {
             </table>
           )}
 
-          <div style={styles.row}>
+          <div className="user-mgmt-row">
             <button
-              style={styles.buttonGhost}
+              type="button"
+              className="user-mgmt-btn user-mgmt-btn-ghost"
               disabled={pagination.page <= 1}
               onClick={() => {
                 const next = page - 1;
@@ -215,11 +254,12 @@ export default function UserManagementPage({ role }) {
             >
               Anterior
             </button>
-            <span style={styles.muted}>
+            <span className="user-mgmt-muted">
               Página {pagination.page} de {pagination.totalPages}
             </span>
             <button
-              style={styles.buttonGhost}
+              type="button"
+              className="user-mgmt-btn user-mgmt-btn-ghost"
               disabled={pagination.page >= pagination.totalPages}
               onClick={() => {
                 const next = page + 1;
@@ -235,46 +275,3 @@ export default function UserManagementPage({ role }) {
     </div>
   );
 }
-
-const styles = {
-  wrapper: { padding: "24px", color: "var(--ink)" },
-  title: { marginTop: 0 },
-  card: {
-    background: "var(--surface)",
-    border: "1px solid var(--border)",
-    borderRadius: "var(--radius)",
-    padding: "16px",
-    marginBottom: "16px",
-  },
-  search: { display: "flex", gap: "8px", marginBottom: "12px" },
-  input: {
-    flex: 1,
-    background: "var(--surface2)",
-    border: "1px solid var(--border)",
-    borderRadius: "var(--radius)",
-    padding: "10px",
-    color: "var(--ink)",
-  },
-  row: { display: "flex", alignItems: "center", gap: "8px", marginTop: "10px" },
-  button: {
-    border: "none",
-    background: "var(--ink)",
-    color: "#fff",
-    borderRadius: "var(--radius)",
-    padding: "10px 12px",
-    cursor: "pointer",
-  },
-  buttonGhost: {
-    border: "1px solid var(--border)",
-    background: "transparent",
-    color: "var(--ink-muted)",
-    borderRadius: "var(--radius)",
-    padding: "8px 10px",
-    cursor: "pointer",
-  },
-  table: { width: "100%", borderCollapse: "collapse" },
-  th: { textAlign: "left", borderBottom: "1px solid var(--border)", padding: "8px 0" },
-  td: { borderBottom: "1px solid var(--border)", padding: "8px 0" },
-  muted: { color: "var(--ink-muted)" },
-  error: { color: "var(--accent)" },
-};
