@@ -23,6 +23,7 @@ beforeAll(async () => {
     password: 'senha123',
     role: 'teacher',
   });
+  if (!res.body.token) throw new Error('Failed to register teacher user: ' + JSON.stringify(res.body));
   authToken = res.body.token;
 });
 
