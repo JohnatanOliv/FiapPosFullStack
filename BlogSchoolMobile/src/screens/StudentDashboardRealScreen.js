@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   TextInput,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import { UserContext } from '../context/UserContext';
 import { useTheme } from '../hooks/useTheme';
@@ -26,12 +27,22 @@ export default function StudentDashboardRealScreen({ navigation }) {
   const [posts, setPosts] = useState([]);
   const [error, setError] = useState('');
 
-  const normalizePosts = (rawPosts) => {
+  const cleanText = (value) =>
+    String(value || '')
+      .replace(/```[\s\S]*?```/g, ' ')
+      .replace(/-{3,}/g, ' ')
+      .replace(/\{\s*"\$oid":[^}]+\}/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+  const normalizePosts = (rawPosts = []) => {
     return rawPosts.map((item) => ({
       ...item,
-      id: item._id,
+      id: item._id || item.id,
+      author: cleanText(item.author) || 'Autor',
+      title: cleanText(item.title) || 'Sem título',
       date: item.createdAt ? new Date(item.createdAt).toLocaleDateString('pt-BR') : '-',
-      excerpt: item.content,
+      excerpt: cleanText(item.content),
       views: item.views || 0,
     }));
   };
@@ -94,9 +105,7 @@ export default function StudentDashboardRealScreen({ navigation }) {
           ]}
           onPress={handleLogout}
         >
-          <Text style={[styles.logoutBtnText, { color: theme.primary }]}>
-            Sair
-          </Text>
+          <Text style={[styles.logoutBtnText, { color: theme.primary }]}>Sair</Text>
         </TouchableOpacity>
       </View>
 
@@ -122,21 +131,21 @@ export default function StudentDashboardRealScreen({ navigation }) {
         </View>
 
         <TouchableOpacity
-          style={[
-            styles.searchBtn,
-            { backgroundColor: theme.primary },
-          ]}
+          style={[styles.searchBtn, { backgroundColor: theme.primary }]}
           onPress={handleSearch}
           disabled={loading}
         >
-          <Text style={styles.searchBtnText}>
-            {loading ? '...' : 'Buscar'}
-          </Text>
+          <Text style={styles.searchBtnText}>{loading ? '...' : 'Buscar'}</Text>
         </TouchableOpacity>
 
         {loading ? (
           <View style={styles.loading}>
-            <ActivityIndicator size="large" color={theme.primary} />
+            <Image
+              source={require('../../assets/alunoeprof.png')}
+              style={styles.loadingLogo}
+              resizeMode="contain"
+            />
+            <ActivityIndicator size="small" color={theme.primary} />
             <Text style={[styles.loadingText, { color: colors.inkMuted }]}>
               Carregando posts...
             </Text>
@@ -250,6 +259,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: spacing['3xl'],
     gap: spacing.md,
+  },
+  loadingLogo: {
+    width: 88,
+    height: 88,
+    marginBottom: spacing.sm,
   },
   loadingText: {
     fontSize: typography.sizes.base,
