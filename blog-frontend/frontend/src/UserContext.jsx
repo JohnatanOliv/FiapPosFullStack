@@ -1,36 +1,66 @@
-import { createContext, useState, useEffect } from "react";
+import { useState } from "react";
+import { UserContext } from "./context/UserContextValue";
 
 /**
  * Default username in Portuguese. Change here for localization.
  */
 const DEFAULT_USERNAME = "Usuário";
+const USER_STORAGE_KEY = "user";
+const AUTH_TOKEN_STORAGE_KEY = "authToken";
 
-export const UserContext = createContext();
+const getInitialUser = () => {
+  const savedUser = localStorage.getItem(USER_STORAGE_KEY);
+  const savedToken = localStorage.getItem(AUTH_TOKEN_STORAGE_KEY);
+
+  if (!savedUser) {
+    if (savedToken) {
+      localStorage.removeItem(AUTH_TOKEN_STORAGE_KEY);
+    }
+    return null;
+  }
+
+  try {
+    return JSON.parse(savedUser);
+  } catch (e) {
+    console.error("Failed to parse saved user:", e);
+    localStorage.removeItem(USER_STORAGE_KEY);
+    localStorage.removeItem(AUTH_TOKEN_STORAGE_KEY);
+    return null;
+  }
+};
 
 export function UserProvider({ children }) {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(getInitialUser);
 
-  useEffect(() => {
-    const savedUser = localStorage.getItem("user");
-    if (savedUser) {
-      try {
-        setUser(JSON.parse(savedUser));
-      } catch (e) {
-        console.error("Failed to parse saved user:", e);
-        localStorage.removeItem("user");
+  const login = (roleOrUser, nameOrToken = null, maybeToken = null) => {
+    const isObjectPayload = typeof roleOrUser === "object" && roleOrUser !== null;
+    const token = isObjectPayload ? nameOrToken : maybeToken;
+
+    const userData = isObjectPayload
+      ? {
+        ...roleOrUser,
+        role: roleOrUser.role || "student",
+        name: roleOrUser.name || DEFAULT_USERNAME,
       }
-    }
-  }, []);
+      : {
+        role: roleOrUser,
+        name: nameOrToken || DEFAULT_USERNAME,
+      };
 
-  const login = (role, name = null) => {
-    const userData = { role, name: name || DEFAULT_USERNAME };
     setUser(userData);
-    localStorage.setItem("user", JSON.stringify(userData));
+    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userData));
+
+    if (token) {
+      localStorage.setItem(AUTH_TOKEN_STORAGE_KEY, token);
+    } else {
+      localStorage.removeItem(AUTH_TOKEN_STORAGE_KEY);
+    }
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem("user");
+    localStorage.removeItem(USER_STORAGE_KEY);
+    localStorage.removeItem(AUTH_TOKEN_STORAGE_KEY);
   };
 
   return (

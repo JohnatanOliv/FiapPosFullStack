@@ -1,12 +1,15 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useContext } from "react";
-import { UserContext } from "../UserContext";
+import { UserContext } from "../context/UserContextValue";
 
 import HomePage from "../pages/HomePage";
 import StudentDashboard from "../pages/aluno/StudentDashboard";
 import TeacherDashboard from "../pages/professor/TeacherDashboard";
 import ProfessorLoginPage from "../pages/auth/ProfessorLoginPage";
 import ProfessorRegisterPage from "../pages/auth/ProfessorRegisterPage";
+import StudentLoginPage from "../pages/auth/StudentLoginPage";
+import PostDetailsPage from "../pages/PostDetailsPage";
+import UserManagementPage from "../pages/admin/UserManagementPage";
 
 function AppRoutes() {
   const { user } = useContext(UserContext);
@@ -50,10 +53,27 @@ function AppRoutes() {
           }
         />
 
-        {/* Aluno - Sem autenticação obrigatória */}
+        <Route
+          path="/student-login"
+          element={
+            user && user.role === "student" ? (
+              <Navigate to="/student" />
+            ) : (
+              <StudentLoginPage />
+            )
+          }
+        />
+
+        {/* Aluno - requer autenticação */}
         <Route
           path="/student"
-          element={<StudentDashboard user={user} />}
+          element={
+            user && user.role === "student" ? (
+              <StudentDashboard />
+            ) : (
+              <Navigate to="/student-login" />
+            )
+          }
         />
 
         {/* Professor - Requer autenticação */}
@@ -66,6 +86,16 @@ function AppRoutes() {
               <Navigate to="/professor-login" />
             )
           }
+        />
+
+        <Route path="/posts/:id" element={<PostDetailsPage />} />
+        <Route
+          path="/admin/teachers"
+          element={user?.role === "teacher" ? <UserManagementPage role="teacher" /> : <Navigate to="/professor-login" />}
+        />
+        <Route
+          path="/admin/students"
+          element={user?.role === "teacher" ? <UserManagementPage role="student" /> : <Navigate to="/professor-login" />}
         />
 
         {/* 404 */}

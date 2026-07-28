@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { api } from "../../services/api";
-import { UserContext } from "../../UserContext";
+import { UserContext } from "../../context/UserContextValue";
 import logo from "../auth/img/alunoeprof.png";
 
 export default function ProfessorRegisterPage() {
@@ -35,9 +35,18 @@ export default function ProfessorRegisterPage() {
 
     setLoading(true);
     try {
-      const response = await api.registerUser(name, email, password);
+      const response = await api.registerUser(name, email, password, "teacher");
       if (response.data.success) {
-        login("teacher", name.trim());
+        const teacher = response.data.data;
+        login(
+          {
+            id: teacher.id,
+            name: teacher.name,
+            email: teacher.email,
+            role: teacher.role || "teacher",
+          },
+          response.data.token
+        );
         navigate("/teacher");
       }
     } catch (err) {

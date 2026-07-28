@@ -5,6 +5,8 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const postsRouter = require('./routes/posts');
 const usersRouter = require('./routes/users');
+const teachersRouter = require('./routes/teachers');
+const studentsRouter = require('./routes/students');
 
 const app = express();
 
@@ -33,6 +35,8 @@ app.get('/health', (req, res) => res.json({ status: 'ok' }));
 // rotas
 app.use('/posts', postsRouter);
 app.use('/users', usersRouter);
+app.use('/teachers', teachersRouter);
+app.use('/students', studentsRouter);
 
 // 404
 app.use((req, res) =>

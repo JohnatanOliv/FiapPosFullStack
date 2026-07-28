@@ -1,5 +1,5 @@
 import { useState, useContext } from "react";
-import { UserContext } from "../../UserContext";
+import { UserContext } from "../../context/UserContextValue";
 import "./Dashboard.css";
 
 export default function PostForm({ post, onSubmit, onClose, saving }) {
@@ -77,4 +77,3 @@ const styles = {
     fontWeight: 500,
   },
 };
-

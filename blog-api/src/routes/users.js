@@ -4,6 +4,7 @@ const { requireAuth, requireRole } = require('../middleware/auth');
 const {
     register,
     login,
+    createUserByAdmin,
     listUsers,
     getUser,
     updateUser,
@@ -12,6 +13,7 @@ const {
 
 router.post('/register', register);
 router.post('/login', login);
+router.post('/', requireAuth, requireRole('teacher'), createUserByAdmin);
 router.get('/', requireAuth, requireRole('teacher'), listUsers);
 router.get('/:id', requireAuth, requireRole('teacher'), getUser);
 router.put('/:id', requireAuth, requireRole('teacher'), updateUser);

@@ -1,23 +1,23 @@
 import { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { api } from "../../services/api";
-import { UserContext } from "../../UserContext";
+import { UserContext } from "../../context/UserContextValue";
 import PostCard from "../../components/PostCard/PostCard";
-import PostModal from "../../components/PostModal/PostModal";
 import "../professor/Dashboard.css";
 
-export default function StudentDashboard({ user }) {
+export default function StudentDashboard() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [searching, setSearching] = useState(false);
-  const [selected, setSelected] = useState(null);
-  const { logout } = useContext(UserContext);
+  const { user, logout } = useContext(UserContext);
   const navigate = useNavigate();
 
-  const loadPosts = async () => {
-    setLoading(true);
+  const loadPosts = async ({ resetLoading } = { resetLoading: true }) => {
+    if (resetLoading) {
+      setLoading(true);
+    }
     setError("");
     try {
       const data = await api.listPosts();
@@ -25,11 +25,36 @@ export default function StudentDashboard({ user }) {
     } catch (e) {
       setError(e.message);
     } finally {
-      setLoading(false);
+      if (resetLoading) {
+        setLoading(false);
+      }
     }
   };
 
-  useEffect(() => { loadPosts(); }, []);
+  useEffect(() => {
+    let active = true;
+
+    const fetchInitialPosts = async () => {
+      try {
+        const data = await api.listPosts();
+        if (!active) return;
+        setPosts(data.data.data);
+      } catch (e) {
+        if (!active) return;
+        setError(e.message);
+      } finally {
+        if (active) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchInitialPosts();
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -65,7 +90,7 @@ export default function StudentDashboard({ user }) {
             <span className="dash-title">BlogSchool</span>
           </div>
           <div className="dash-user">
-            <span className="user-badge student">🎒 Aluno</span>
+            <span className="user-badge student">🎒 {user?.name || "Aluno"}</span>
             <button className="logout-btn" onClick={handleLogout}>Voltar</button>
           </div>
         </div>
@@ -75,6 +100,9 @@ export default function StudentDashboard({ user }) {
         <div className="dash-hero">
           <h2 className="dash-welcome">Bem-vindo ao Blog! 👋</h2>
           <p className="dash-welcome-sub">Explore os posts do blog da sua turma.</p>
+          <p className="dash-welcome-sub" style={{ marginTop: 8 }}>
+            Comentários disponíveis na leitura completa do post.
+          </p>
         </div>
 
         <form className="search-bar" onSubmit={handleSearch}>
@@ -109,12 +137,11 @@ export default function StudentDashboard({ user }) {
           <>
             <p className="post-count">{posts.length} post{posts.length !== 1 ? "s" : ""}</p>
             <div className="posts-grid">
-              {posts.map((post, i) => (
+              {posts.map((post) => (
                 <PostCard
                   key={post._id}
                   post={post}
-                  index={i}
-                  onClick={() => setSelected(post)}
+                  onClick={() => navigate(`/posts/${post._id}`)}
                 />
               ))}
             </div>
@@ -122,9 +149,9 @@ export default function StudentDashboard({ user }) {
         )}
       </main>
 
-      {selected && (
-        <PostModal post={selected} onClose={() => setSelected(null)} />
-      )}
+      <div style={{ padding: "0 24px 24px", color: "var(--ink-muted)" }}>
+        <Link to="/" style={{ color: "var(--accent)" }}>Voltar ao início</Link>
+      </div>
     </div>
   );
 }

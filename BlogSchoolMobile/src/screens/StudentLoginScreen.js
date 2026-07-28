@@ -13,7 +13,7 @@ import { typography } from '../styles/typography';
 import { UserContext } from '../context/UserContext';
 import { api } from '../services/api';
 
-export default function TeacherLoginScreen({ navigation }) {
+export default function StudentLoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -30,12 +30,12 @@ export default function TeacherLoginScreen({ navigation }) {
     setLoading(true);
     try {
       const response = await api.loginUser(email, password);
-      if (response.data.role !== 'teacher') {
-        setError('Este acesso é exclusivo para professores.');
+      if (response.data.role !== 'student') {
+        setError('Este acesso é exclusivo para alunos.');
         return;
       }
       login({ user: response.data, token: response.token });
-      navigation.replace('TeacherDashboard');
+      navigation.replace('StudentDashboard');
     } catch (err) {
       setError(err.message);
     } finally {
@@ -46,13 +46,13 @@ export default function TeacherLoginScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.title}>Login do Professor</Text>
+        <Text style={styles.title}>Login do Aluno</Text>
         <Text style={styles.subtitle}>Entre com email e senha.</Text>
 
         <Text style={styles.label}>Email</Text>
         <TextInput
           style={styles.input}
-          placeholder="professor@email.com"
+          placeholder="aluno@email.com"
           placeholderTextColor={colors.inkMuted}
           value={email}
           onChangeText={(value) => { setEmail(value); setError(''); }}
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
   error: { color: colors.error, marginBottom: spacing.sm },
   submitBtn: {
     marginTop: spacing.md,
-    backgroundColor: colors.accentTeacher,
+    backgroundColor: colors.accentStudent,
     borderRadius: radius.md,
     padding: spacing.md,
     alignItems: 'center',

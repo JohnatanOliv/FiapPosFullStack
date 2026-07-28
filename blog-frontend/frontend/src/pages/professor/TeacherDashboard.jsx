@@ -1,9 +1,8 @@
 import { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { api } from "../../services/api";
-import { UserContext } from "../../UserContext";
+import { UserContext } from "../../context/UserContextValue";
 import PostCard from "../../components/PostCard/PostCard";
-import PostModal from "../../components/PostModal/PostModal";
 import PostForm from "./PostForm";
 import ConfirmDialog from "../../components/ConfirmDialog/ConfirmDialog";
 import "./Dashboard.css";
@@ -14,13 +13,12 @@ export default function TeacherDashboard({ user }) {
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [searching, setSearching] = useState(false);
-  const [selected, setSelected] = useState(null);
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState(null);
-  
+
   const { logout } = useContext(UserContext);
   const navigate = useNavigate();
 
@@ -29,8 +27,10 @@ export default function TeacherDashboard({ user }) {
     setTimeout(() => setToast(null), 3000);
   };
 
-  const loadPosts = async () => {
-    setLoading(true);
+  const loadPosts = async ({ resetLoading } = { resetLoading: true }) => {
+    if (resetLoading) {
+      setLoading(true);
+    }
     setError("");
     try {
       const data = await api.listPosts();
@@ -38,11 +38,36 @@ export default function TeacherDashboard({ user }) {
     } catch (e) {
       setError(e.message);
     } finally {
-      setLoading(false);
+      if (resetLoading) {
+        setLoading(false);
+      }
     }
   };
 
-  useEffect(() => { loadPosts(); }, []);
+  useEffect(() => {
+    let active = true;
+
+    const fetchInitialPosts = async () => {
+      try {
+        const data = await api.listPosts();
+        if (!active) return;
+        setPosts(data.data.data);
+      } catch (e) {
+        if (!active) return;
+        setError(e.message);
+      } finally {
+        if (active) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchInitialPosts();
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -125,6 +150,10 @@ export default function TeacherDashboard({ user }) {
           <div>
             <h2 className="dash-welcome">Olá, Prof. <em>{user?.name || "Professor"}</em> 👋</h2>
             <p className="dash-welcome-sub">Gerencie os posts do blog da sua turma.</p>
+            <div style={{ marginTop: 10, display: "flex", gap: 10, flexWrap: "wrap" }}>
+              <Link className="link-btn" to="/admin/teachers">Gerenciar professores</Link>
+              <Link className="link-btn" to="/admin/students">Gerenciar alunos</Link>
+            </div>
           </div>
           <button className="new-post-btn" onClick={() => setFormOpen(true)}>
             + Novo Post
@@ -164,13 +193,12 @@ export default function TeacherDashboard({ user }) {
           <>
             <p className="post-count">{posts.length} post{posts.length !== 1 ? "s" : ""}</p>
             <div className="posts-grid">
-              {posts.map((post, i) => (
+              {posts.map((post) => (
                 <PostCard
                   key={post._id}
                   post={post}
-                  index={i}
                   isTeacher
-                  onClick={() => setSelected(post)}
+                  onClick={() => navigate(`/posts/${post._id}`)}
                   onEdit={(e) => { e.stopPropagation(); setEditing(post); }}
                   onDelete={(e) => { e.stopPropagation(); setDeleteTarget(post); }}
                 />
@@ -182,10 +210,6 @@ export default function TeacherDashboard({ user }) {
 
       {toast && (
         <div className={`toast toast-${toast.type}`}>{toast.msg}</div>
-      )}
-
-      {selected && (
-        <PostModal post={selected} onClose={() => setSelected(null)} />
       )}
 
       {(formOpen || editing) && (

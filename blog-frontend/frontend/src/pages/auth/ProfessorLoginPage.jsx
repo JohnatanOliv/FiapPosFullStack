@@ -1,13 +1,12 @@
 import { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { api } from "../../services/api";
-import { UserContext } from "../../UserContext";
+import { UserContext } from "../../context/UserContextValue";
 import logo from "./img/alunoeprof.png";
 
 export default function ProfessorLoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -30,11 +29,17 @@ export default function ProfessorLoginPage() {
     setLoading(true);
     try {
       const response = await api.loginUser(email, password);
-      console.log("Resposta da API:", response.data); // 👈 adiciona isso
-
       if (response.data.success) {
-        const teacherName = response.data.data.name; // pega do DB
-        login("teacher", teacherName);
+        const teacher = response.data.data;
+        login(
+          {
+            id: teacher.id,
+            name: teacher.name,
+            email: teacher.email,
+            role: teacher.role || "teacher",
+          },
+          response.data.token
+        );
         navigate("/teacher");
       }
     } catch (err) {

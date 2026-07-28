@@ -1,23 +1,32 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useMemo, useState } from 'react';
 
 export const UserContext = createContext();
 
 export function UserProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [userType, setUserType] = useState(null); // 'student' or 'teacher'
+  const [token, setToken] = useState(null);
 
-  const login = (type, name) => {
-    setUserType(type);
-    setUser({ name, type });
+  const login = ({ user: nextUser, token: nextToken }) => {
+    setUser(nextUser);
+    setToken(nextToken);
   };
 
   const logout = () => {
     setUser(null);
-    setUserType(null);
+    setToken(null);
   };
 
+  const value = useMemo(() => ({
+    user,
+    token,
+    login,
+    logout,
+    isTeacher: user?.role === 'teacher',
+    isStudent: user?.role === 'student',
+  }), [token, user]);
+
   return (
-    <UserContext.Provider value={{ user, userType, login, logout }}>
+    <UserContext.Provider value={value}>
       {children}
     </UserContext.Provider>
   );

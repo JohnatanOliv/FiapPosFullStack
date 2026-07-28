@@ -22,4 +22,19 @@ const validateUpdate = [
   handleValidation,
 ];
 
-module.exports = { validateCreate, validateUpdate };
+const validateCommentCreate = [
+  body('content').trim().notEmpty().withMessage('Conteúdo do comentário é obrigatório.'),
+  handleValidation,
+];
+
+const validateCommentUpdate = [
+  body('content').trim().notEmpty().withMessage('Conteúdo do comentário é obrigatório.'),
+  handleValidation,
+];
+
+module.exports = {
+  validateCreate,
+  validateUpdate,
+  validateCommentCreate,
+  validateCommentUpdate,
+};

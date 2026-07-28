@@ -1,16 +1,12 @@
 import { useNavigate } from "react-router-dom";
-import { useContext } from "react";
-import { UserContext } from "../UserContext";
 import logo from "./auth/img/alunoeprof.png";
 import "./HomePage.css";
 
 export default function HomePage() {
   const navigate = useNavigate();
-  const { login } = useContext(UserContext);
 
   const handleStudentAccess = () => {
-    login("student", "Aluno");
-    navigate("/student");
+    navigate("/student-login");
   };
 
   const handleProfessorAccess = () => {

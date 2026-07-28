@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -7,22 +7,17 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from 'react-native';
-import { UserContext } from '../context/UserContext';
 import HomeButton from '../components/HomeButton';
 import { colors } from '../styles/colors';
 import { spacing, radius } from '../styles/spacing';
 import { typography } from '../styles/typography';
 
 export default function HomeScreen({ navigation }) {
-  const { login } = useContext(UserContext);
-
   const handleStudentPress = () => {
-    login('student', 'Aluno');
-    navigation.replace('StudentDashboard');
+    navigation.replace('StudentLogin');
   };
 
   const handleTeacherPress = () => {
-    login('teacher', 'Professor');
     navigation.replace('TeacherLogin');
   };
 

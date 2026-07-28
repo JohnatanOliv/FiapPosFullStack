@@ -8,9 +8,12 @@ import { colors } from './src/styles/colors';
 
 // Screens
 import HomeScreen from './src/screens/HomeScreen';
-import StudentDashboardScreen from './src/screens/StudentDashboardScreen';
+import StudentDashboardScreen from './src/screens/StudentDashboardRealScreen';
+import StudentLoginScreen from './src/screens/StudentLoginScreen';
 import TeacherLoginScreen from './src/screens/TeacherLoginScreen';
-import TeacherDashboardScreen from './src/screens/TeacherDashboardScreen';
+import TeacherDashboardScreen from './src/screens/TeacherDashboardRealScreen';
+import PostDetailsScreen from './src/screens/PostDetailsScreen';
+import ManageUsersScreen from './src/screens/ManageUsersScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -30,6 +33,11 @@ function AppStack() {
         options={{ animationEnabled: false }}
       />
       <Stack.Screen
+        name="StudentLogin"
+        component={StudentLoginScreen}
+        options={{ animationTypeForReplace: 'fade' }}
+      />
+      <Stack.Screen
         name="StudentDashboard"
         component={StudentDashboardScreen}
         options={{ animationTypeForReplace: 'fade' }}
@@ -42,6 +50,16 @@ function AppStack() {
       <Stack.Screen
         name="TeacherDashboard"
         component={TeacherDashboardScreen}
+        options={{ animationTypeForReplace: 'fade' }}
+      />
+      <Stack.Screen
+        name="PostDetails"
+        component={PostDetailsScreen}
+        options={{ animationTypeForReplace: 'fade' }}
+      />
+      <Stack.Screen
+        name="ManageUsers"
+        component={ManageUsersScreen}
         options={{ animationTypeForReplace: 'fade' }}
       />
     </Stack.Navigator>

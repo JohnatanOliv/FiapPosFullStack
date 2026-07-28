@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function PostCard({ post, isTeacher, onEdit, onDelete, onClick, index }) {
+export default function PostCard({ post, isTeacher, onEdit, onDelete, onClick }) {
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   const date = new Date(post.createdAt).toLocaleDateString("pt-BR", {
@@ -44,7 +44,7 @@ const styles = {
     borderRadius: "var(--radius-lg)",
     padding: "28px 32px",
     transition: "box-shadow 0.2s, transform 0.2s",
-    display: "flex",           
+    display: "flex",
     flexDirection: "column",
   },
   meta: {

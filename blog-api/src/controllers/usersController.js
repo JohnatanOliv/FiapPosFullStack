@@ -4,8 +4,8 @@ const { issueAuthToken } = require('../middleware/auth');
 
 const ALLOWED_ROLES = new Set(['teacher', 'student']);
 
-const normalizeRole = (role) => {
-  if (!role) return 'teacher';
+const normalizeRole = (role, fallback = null) => {
+  if (role === undefined || role === null || role === '') return fallback;
   return String(role).trim().toLowerCase();
 };
 
@@ -18,10 +18,19 @@ const sanitizeUser = (user) => ({
   updatedAt: user.updatedAt,
 });
 
+const resolveRoleScope = (req, fallback = null) => {
+  if (req.roleScope) return req.roleScope;
+  return normalizeRole(req.body.role ?? req.query.role, fallback);
+};
+
+const assertValidRole = (role, message = 'Role inválido. Use "teacher" ou "student".') => {
+  return role && ALLOWED_ROLES.has(role) ? null : message;
+};
+
 const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
-    const role = normalizeRole(req.body.role);
+    const role = resolveRoleScope(req, 'teacher');
 
     if (!name || !email || !password) {
       return res.status(400).json({
@@ -30,15 +39,13 @@ const register = async (req, res) => {
       });
     }
 
-    if (!ALLOWED_ROLES.has(role)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Role inválido. Use "teacher" ou "student".',
-      });
+    const roleError = assertValidRole(role);
+    if (roleError) {
+      return res.status(400).json({ success: false, message: roleError });
     }
 
-    const userExists = await User.findOne({ email });
-
+    const normalizedEmail = String(email).trim().toLowerCase();
+    const userExists = await User.findOne({ email: normalizedEmail });
     if (userExists) {
       return res.status(400).json({
         success: false,
@@ -46,25 +53,73 @@ const register = async (req, res) => {
       });
     }
 
-    const passwordHash = await bcrypt.hash(password, 10);
-
+    const passwordHash = await bcrypt.hash(String(password), 10);
     const user = await User.create({
-      name,
-      email,
+      name: String(name).trim(),
+      email: normalizedEmail,
       passwordHash,
       role,
     });
 
     const token = issueAuthToken(user);
-
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: 'Usuário criado com sucesso.',
       token,
       data: sanitizeUser(user),
     });
   } catch (err) {
-    res.status(500).json({
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+const createUserByAdmin = async (req, res) => {
+  try {
+    const role = resolveRoleScope(req, null);
+    const roleError = assertValidRole(role);
+    if (roleError) {
+      return res.status(400).json({ success: false, message: roleError });
+    }
+
+    const { name, email, password } = req.body;
+    if (!name || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Nome, email e senha são obrigatórios.',
+      });
+    }
+
+    if (String(password).length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: 'A senha deve ter no mínimo 6 caracteres.',
+      });
+    }
+
+    const normalizedEmail = String(email).trim().toLowerCase();
+    const userExists = await User.findOne({ email: normalizedEmail });
+    if (userExists) {
+      return res.status(400).json({ success: false, message: 'Email já cadastrado.' });
+    }
+
+    const passwordHash = await bcrypt.hash(String(password), 10);
+    const user = await User.create({
+      name: String(name).trim(),
+      email: normalizedEmail,
+      passwordHash,
+      role,
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: 'Usuário criado com sucesso.',
+      data: sanitizeUser(user),
+    });
+  } catch (err) {
+    return res.status(500).json({
       success: false,
       message: err.message,
     });
@@ -82,8 +137,7 @@ const login = async (req, res) => {
       });
     }
 
-    const user = await User.findOne({ email });
-
+    const user = await User.findOne({ email: String(email).trim().toLowerCase() });
     if (!user) {
       return res.status(401).json({
         success: false,
@@ -91,11 +145,7 @@ const login = async (req, res) => {
       });
     }
 
-    const passwordMatch = await bcrypt.compare(
-      password,
-      user.passwordHash
-    );
-
+    const passwordMatch = await bcrypt.compare(String(password), user.passwordHash);
     if (!passwordMatch) {
       return res.status(401).json({
         success: false,
@@ -104,50 +154,46 @@ const login = async (req, res) => {
     }
 
     const token = issueAuthToken(user);
-
-    res.json({
+    return res.json({
       success: true,
       message: 'Login realizado com sucesso.',
       token,
       data: sanitizeUser(user),
     });
   } catch (err) {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: err.message,
     });
   }
 };
 
+const buildListFilter = (req) => {
+  const role = resolveRoleScope(req, null);
+  const q = req.query.q ? String(req.query.q).trim() : '';
+  const filter = {};
+
+  if (role) {
+    const roleError = assertValidRole(role, 'Filtro role inválido. Use "teacher" ou "student".');
+    if (roleError) return { error: roleError };
+    filter.role = role;
+  }
+
+  if (q) {
+    const regex = new RegExp(q, 'i');
+    filter.$or = [{ name: regex }, { email: regex }];
+  }
+
+  return { filter };
+};
+
 const listUsers = async (req, res) => {
   try {
     const page = Math.max(parseInt(req.query.page || '1', 10), 1);
     const limit = Math.min(Math.max(parseInt(req.query.limit || '10', 10), 1), 100);
-    const role = req.query.role ? normalizeRole(req.query.role) : null;
-    const q = req.query.q ? String(req.query.q).trim() : '';
-
-    if (role && !ALLOWED_ROLES.has(role)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Filtro role inválido. Use "teacher" ou "student".',
-      });
-    }
-
-    const filter = {};
-    if (role === 'teacher') {
-      filter.$or = [{ role: 'teacher' }, { role: { $exists: false } }];
-    } else if (role) {
-      filter.role = role;
-    }
-    if (q) {
-      const regex = new RegExp(q, 'i');
-      const textFilter = [{ name: regex }, { email: regex }];
-      if (filter.$or) {
-        filter.$and = [{ $or: filter.$or }, { $or: textFilter }];
-        delete filter.$or;
-      } else {
-        filter.$or = textFilter;
-      }
+    const { error, filter } = buildListFilter(req);
+    if (error) {
+      return res.status(400).json({ success: false, message: error });
     }
 
     const [total, users] = await Promise.all([
@@ -175,7 +221,11 @@ const listUsers = async (req, res) => {
 
 const getUser = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
+    const filter = { _id: req.params.id };
+    const role = resolveRoleScope(req, null);
+    if (role) filter.role = role;
+
+    const user = await User.findOne(filter);
     if (!user) {
       return res.status(404).json({ success: false, message: 'Usuário não encontrado.' });
     }
@@ -188,6 +238,7 @@ const getUser = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const updates = {};
+    const scopedRole = resolveRoleScope(req, null);
 
     if (req.body.name !== undefined) {
       const name = String(req.body.name).trim();
@@ -206,14 +257,20 @@ const updateUser = async (req, res) => {
     }
 
     if (req.body.role !== undefined) {
-      const role = normalizeRole(req.body.role);
-      if (!ALLOWED_ROLES.has(role)) {
+      const nextRole = normalizeRole(req.body.role, null);
+      const roleError = assertValidRole(nextRole);
+      if (roleError) {
+        return res.status(400).json({ success: false, message: roleError });
+      }
+      if (scopedRole && scopedRole !== nextRole) {
         return res.status(400).json({
           success: false,
-          message: 'Role inválido. Use "teacher" ou "student".',
+          message: `Nesta rota, o papel deve permanecer como "${scopedRole}".`,
         });
       }
-      updates.role = role;
+      updates.role = nextRole;
+    } else if (scopedRole) {
+      updates.role = scopedRole;
     }
 
     if (req.body.password !== undefined) {
@@ -227,8 +284,11 @@ const updateUser = async (req, res) => {
       updates.passwordHash = await bcrypt.hash(password, 10);
     }
 
-    const user = await User.findByIdAndUpdate(req.params.id, updates, {
-      new: true,
+    const filter = { _id: req.params.id };
+    if (scopedRole) filter.role = scopedRole;
+
+    const user = await User.findOneAndUpdate(filter, updates, {
+      returnDocument: 'after',
       runValidators: true,
     });
 
@@ -244,7 +304,11 @@ const updateUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   try {
-    const user = await User.findByIdAndDelete(req.params.id);
+    const filter = { _id: req.params.id };
+    const role = resolveRoleScope(req, null);
+    if (role) filter.role = role;
+
+    const user = await User.findOneAndDelete(filter);
     if (!user) {
       return res.status(404).json({ success: false, message: 'Usuário não encontrado.' });
     }
@@ -255,4 +319,12 @@ const deleteUser = async (req, res) => {
   }
 };
 
-module.exports = { register, login, listUsers, getUser, updateUser, deleteUser };
+module.exports = {
+  register,
+  login,
+  createUserByAdmin,
+  listUsers,
+  getUser,
+  updateUser,
+  deleteUser,
+};
