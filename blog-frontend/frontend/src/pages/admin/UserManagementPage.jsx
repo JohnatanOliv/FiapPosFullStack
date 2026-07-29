@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { api } from "../../services/api";
 import "../../styles/UserManagementPage.css";
 
-const emptyForm = { name: "", email: "", password: "" };
+const emptyForm = { name: "", email: "", password: "", passwordConfirm: "" };
 
 export default function UserManagementPage({ role }) {
   const navigate = useNavigate();
@@ -16,6 +16,7 @@ export default function UserManagementPage({ role }) {
   const [editing, setEditing] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   const labels = useMemo(() => {
     return role === "teacher"
@@ -84,25 +85,71 @@ export default function UserManagementPage({ role }) {
   const submit = async (event) => {
     event.preventDefault();
     setError("");
+
+    const name = form.name.trim();
+    const email = form.email.trim();
+    const password = form.password.trim();
+    const passwordConfirm = form.passwordConfirm.trim();
+
+    if (!name || !email) {
+      setError("Todos os campos são obrigatórios.");
+      return;
+    }
+
+    if (!editing) {
+      if (!password || !passwordConfirm) {
+        setError("Todos os campos são obrigatórios.");
+        return;
+      }
+
+      if (password !== passwordConfirm) {
+        setError("As senhas não conferem.");
+        return;
+      }
+
+      if (password.length < 6) {
+        setError("A senha deve ter no mínimo 6 caracteres.");
+        return;
+      }
+    } else if (password || passwordConfirm) {
+      if (!password || !passwordConfirm) {
+        setError("Todos os campos são obrigatórios.");
+        return;
+      }
+
+      if (password !== passwordConfirm) {
+        setError("As senhas não conferem.");
+        return;
+      }
+
+      if (password.length < 6) {
+        setError("A senha deve ter no mínimo 6 caracteres.");
+        return;
+      }
+    }
+
+    setSaving(true);
     try {
       if (editing) {
-        const payload = { name: form.name, email: form.email };
-        if (form.password.trim()) payload.password = form.password.trim();
+        const payload = { name, email };
+        if (password) payload.password = password;
         await apiRole.update(editing.id, payload);
       } else {
-        await apiRole.create(form);
+        await apiRole.create({ name, email, password });
       }
       setForm(emptyForm);
       setEditing(null);
       await load(page, search);
     } catch (err) {
       setError(err.response?.data?.message || "Falha ao salvar.");
+    } finally {
+      setSaving(false);
     }
   };
 
   const editItem = (item) => {
     setEditing(item);
-    setForm({ name: item.name, email: item.email, password: "" });
+    setForm({ name: item.name, email: item.email, password: "", passwordConfirm: "" });
   };
 
   const removeItem = async (id) => {
@@ -140,43 +187,63 @@ export default function UserManagementPage({ role }) {
         <p className="user-mgmt-subtitle">Gerenciamento de {labels.plural.toLowerCase()}</p>
       </div>
 
-      <form onSubmit={submit} className="user-mgmt-card">
+      <form onSubmit={submit} className="user-mgmt-card user-mgmt-form-card">
         <h2 className="user-mgmt-section-title">{editing ? `Editar ${labels.singular}` : `Criar ${labels.singular}`}</h2>
+
+        <label className="user-mgmt-label">Nome Completo</label>
         <input
           className="user-mgmt-input"
-          placeholder="Nome"
+          placeholder="Seu nome"
           value={form.name}
           onChange={(e) => setForm((old) => ({ ...old, name: e.target.value }))}
-          required
+          disabled={saving}
         />
+
+        <label className="user-mgmt-label">Email</label>
         <input
           className="user-mgmt-input"
-          placeholder="Email"
+          placeholder="seu@email.com"
           type="email"
           value={form.email}
           onChange={(e) => setForm((old) => ({ ...old, email: e.target.value }))}
-          required
+          disabled={saving}
         />
+
+        <label className="user-mgmt-label">{editing ? "Nova senha (opcional)" : "Senha"}</label>
         <input
           className="user-mgmt-input"
-          placeholder={editing ? "Nova senha (opcional)" : "Senha"}
+          placeholder={editing ? "Digite uma nova senha" : "Digite uma senha"}
           type="password"
           value={form.password}
           onChange={(e) => setForm((old) => ({ ...old, password: e.target.value }))}
-          required={!editing}
+          disabled={saving}
         />
 
+        <label className="user-mgmt-label">Confirme a Senha</label>
+        <input
+          className="user-mgmt-input"
+          placeholder="Confirme sua senha"
+          type="password"
+          value={form.passwordConfirm}
+          onChange={(e) => setForm((old) => ({ ...old, passwordConfirm: e.target.value }))}
+          disabled={saving}
+        />
+
+        {error && <p className="user-mgmt-error">{error}</p>}
+
         <div className="user-mgmt-row">
-          <button className="user-mgmt-btn user-mgmt-btn-primary" type="submit">
-            {editing ? "Salvar alterações" : "Cadastrar"}
+          <button className="user-mgmt-btn user-mgmt-btn-primary" type="submit" disabled={saving}>
+            {saving ? "Salvando..." : editing ? "Salvar alterações" : "Cadastrar"}
           </button>
           {editing && (
             <button
               className="user-mgmt-btn user-mgmt-btn-ghost"
               type="button"
+              disabled={saving}
               onClick={() => {
                 setEditing(null);
                 setForm(emptyForm);
+                setError("");
               }}
             >
               Cancelar
@@ -196,8 +263,6 @@ export default function UserManagementPage({ role }) {
           Buscar
         </button>
       </form>
-
-      {error && <p className="user-mgmt-error">{error}</p>}
 
       {loading ? (
         <p className="user-mgmt-muted">Carregando...</p>
