@@ -6,23 +6,14 @@ import { typography } from '../styles/typography';
 
 export default function PostCard({ post, onPress }) {
   return (
-    <TouchableOpacity
-      style={[styles.card, shadows.md]}
-      onPress={onPress}
-      activeOpacity={0.7}
-    >
+    <TouchableOpacity style={[styles.card, shadows.sm]} onPress={onPress} activeOpacity={0.85}>
       <View style={styles.meta}>
-        <Text style={styles.author}>{post.author}</Text>
+        <Text style={styles.author} numberOfLines={1}>{post.author}</Text>
         <Text style={styles.date}>{post.date}</Text>
       </View>
 
-      <Text style={styles.title} numberOfLines={2}>
-        {post.title}
-      </Text>
-
-      <Text style={styles.excerpt} numberOfLines={3}>
-        {post.excerpt}
-      </Text>
+      <Text style={styles.title} numberOfLines={2}>{post.title}</Text>
+      <Text style={styles.excerpt} numberOfLines={3}>{post.excerpt}</Text>
 
       <View style={styles.footer}>
         <View style={styles.badge}>
@@ -40,53 +31,39 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     marginBottom: spacing.md,
     borderWidth: 1,
-    borderColor: colors.borderLight,
-    minHeight: 150,
+    borderColor: colors.border,
   },
   meta: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
     marginBottom: spacing.sm,
   },
-  author: {
-    fontSize: typography.sizes.xs,
-    color: colors.inkMuted,
-    fontWeight: '600',
-  },
-  date: {
-    fontSize: typography.sizes.xs,
-    color: colors.inkMuted,
-    opacity: 0.7,
-  },
+  author: { fontSize: typography.sizes.xs, color: colors.inkMuted, fontWeight: '600', maxWidth: '68%' },
+  date: { fontSize: typography.sizes.xs, color: colors.inkMuted },
   title: {
-    fontSize: typography.sizes.lg,
+    fontSize: typography.sizes.xl,
     fontWeight: '700',
     color: colors.ink,
     marginBottom: spacing.sm,
-    lineHeight: 24,
+    lineHeight: 26,
   },
   excerpt: {
     fontSize: typography.sizes.sm,
     color: colors.inkMuted,
     marginBottom: spacing.md,
-    lineHeight: 20,
+    lineHeight: 22,
   },
   footer: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
     borderTopWidth: 1,
     borderTopColor: colors.borderLight,
     paddingTop: spacing.md,
   },
   badge: {
-    backgroundColor: 'rgba(255,255,255,0.05)',
+    alignSelf: 'flex-start',
+    backgroundColor: colors.surface2,
+    borderRadius: radius.md,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
-    borderRadius: radius.md,
   },
-  badgeText: {
-    fontSize: typography.sizes.xs,
-    color: colors.ink,
-  },
+  badgeText: { fontSize: typography.sizes.xs, color: colors.ink },
 });

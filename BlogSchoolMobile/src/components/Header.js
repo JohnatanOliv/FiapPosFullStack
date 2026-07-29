@@ -8,15 +8,13 @@ export default function Header({ title, subtitle }) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{title}</Text>
-      {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
+      {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    marginBottom: spacing.lg,
-  },
+  container: { marginBottom: spacing.lg },
   title: {
     fontSize: typography.sizes['3xl'],
     fontWeight: '700',
@@ -26,6 +24,6 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: typography.sizes.base,
     color: colors.inkMuted,
-    fontWeight: '300',
+    lineHeight: 22,
   },
 });

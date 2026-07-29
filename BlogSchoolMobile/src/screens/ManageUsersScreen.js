@@ -7,6 +7,7 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import { UserContext } from '../context/UserContext';
 import { api } from '../services/api';
@@ -27,6 +28,7 @@ export default function ManageUsersScreen({ route }) {
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(initialForm);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
 
   const labels = useMemo(
     () =>
@@ -53,23 +55,29 @@ export default function ManageUsersScreen({ route }) {
 
   const primaryColor = role === 'teacher' ? colors.accentRed : colors.accentGreen;
 
+  const normalizeList = (response, nextPage) => {
+    const dataList = response?.data?.data ?? response?.data ?? [];
+    const pageInfo =
+      response?.data?.pagination ??
+      response?.pagination ??
+      { page: nextPage, totalPages: 1 };
+
+    setItems(Array.isArray(dataList) ? dataList : []);
+    setPagination(pageInfo);
+  };
+
   const load = async (nextPage = page, q = search) => {
+    setLoading(true);
     setError('');
     try {
       const response = await service.list(nextPage, q);
-
-      const dataList = response?.data?.data ?? response?.data ?? [];
-      const pageInfo =
-        response?.data?.pagination ??
-        response?.pagination ??
-        { page: nextPage, totalPages: 1 };
-
-      setItems(Array.isArray(dataList) ? dataList : []);
-      setPagination(pageInfo);
+      normalizeList(response, nextPage);
     } catch (err) {
       setItems([]);
       setPagination({ page: 1, totalPages: 1 });
       setError(err?.message || 'Falha ao carregar dados.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -79,14 +87,25 @@ export default function ManageUsersScreen({ route }) {
 
   const submit = async () => {
     setError('');
+
+    if (!form.name.trim() || !form.email.trim() || (!editing && !form.password.trim())) {
+      setError('Preencha os campos obrigatórios.');
+      return;
+    }
+
     try {
       if (editing) {
-        const payload = { name: form.name, email: form.email };
+        const payload = { name: form.name.trim(), email: form.email.trim() };
         if (form.password.trim()) payload.password = form.password.trim();
         await service.update(editing.id || editing._id, payload);
       } else {
-        await service.create(form);
+        await service.create({
+          name: form.name.trim(),
+          email: form.email.trim(),
+          password: form.password.trim(),
+        });
       }
+
       setEditing(null);
       setForm(initialForm);
       await load(page, search);
@@ -127,6 +146,7 @@ export default function ManageUsersScreen({ route }) {
           <Text style={styles.sectionTitle}>
             {editing ? `Editar ${labels.singular}` : `Novo ${labels.singular}`}
           </Text>
+
           <TextInput
             style={styles.input}
             value={form.name}
@@ -150,44 +170,66 @@ export default function ManageUsersScreen({ route }) {
             placeholderTextColor={colors.inkMuted}
             secureTextEntry
           />
+
           <TouchableOpacity style={[styles.btn, { backgroundColor: primaryColor }]} onPress={submit}>
             <Text style={styles.btnText}>{editing ? 'Salvar' : 'Cadastrar'}</Text>
           </TouchableOpacity>
+
+          {editing ? (
+            <TouchableOpacity
+              style={styles.btnGhost}
+              onPress={() => {
+                setEditing(null);
+                setForm(initialForm);
+              }}
+            >
+              <Text style={styles.btnGhostText}>Cancelar edição</Text>
+            </TouchableOpacity>
+          ) : null}
         </View>
 
         {error ? <Text style={styles.error}>{error}</Text> : null}
 
-        {items.map((item, index) => {
-          const itemId = item.id || item._id || `item-${index}`;
-          return (
-            <View key={itemId} style={styles.card}>
-              <Text style={styles.name}>{item.name}</Text>
-              <Text style={styles.email}>{item.email}</Text>
-              <View style={styles.actions}>
-                <TouchableOpacity
-                  style={styles.btnGhost}
-                  onPress={() => {
-                    setEditing(item);
-                    setForm({ name: item.name, email: item.email, password: '' });
-                  }}
-                >
-                  <Text style={styles.btnGhostText}>Editar</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.btnGhost}
-                  onPress={async () => {
-                    await service.remove(itemId);
-                    load(page, search);
-                  }}
-                >
-                  <Text style={styles.btnGhostText}>Excluir</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          );
-        })}
+        {loading ? (
+          <View style={styles.loadingWrap}>
+            <ActivityIndicator color={primaryColor} />
+            <Text style={styles.loadingText}>Carregando...</Text>
+          </View>
+        ) : (
+          items.map((item, index) => {
+            const itemId = item.id || item._id || `item-${index}`;
+            return (
+              <View key={itemId} style={styles.card}>
+                <Text style={styles.name}>{item.name}</Text>
+                <Text style={styles.email}>{item.email}</Text>
 
-        <View style={styles.actions}>
+                <View style={styles.actions}>
+                  <TouchableOpacity
+                    style={styles.btnGhost}
+                    onPress={() => {
+                      setEditing(item);
+                      setForm({ name: item.name || '', email: item.email || '', password: '' });
+                    }}
+                  >
+                    <Text style={styles.btnGhostText}>Editar</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={styles.btnGhost}
+                    onPress={async () => {
+                      await service.remove(itemId);
+                      load(page, search);
+                    }}
+                  >
+                    <Text style={styles.btnGhostText}>Excluir</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            );
+          })
+        )}
+
+        <View style={styles.pagination}>
           <TouchableOpacity
             style={styles.btnGhost}
             disabled={pagination.page <= 1}
@@ -227,11 +269,7 @@ const styles = StyleSheet.create({
 
   header: { alignItems: 'center', marginBottom: spacing.lg },
   logo: { fontSize: 42, marginBottom: spacing.sm },
-  title: {
-    color: colors.ink,
-    fontSize: typography.sizes['3xl'],
-    fontWeight: '700',
-  },
+  title: { color: colors.ink, fontSize: typography.sizes['3xl'], fontWeight: '700' },
   subtitle: {
     color: colors.inkMuted,
     fontSize: typography.sizes.xs,
@@ -239,27 +277,24 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     marginTop: spacing.xs,
   },
-  divider: {
-    height: 1,
-    backgroundColor: colors.border,
-    marginBottom: spacing.lg,
-  },
+  divider: { height: 1, backgroundColor: colors.borderLight, marginBottom: spacing.lg },
 
   sectionTitle: { color: colors.ink, marginBottom: spacing.sm, fontWeight: '700' },
 
   input: {
-    backgroundColor: colors.surface2,
+    backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: radius.md,
     color: colors.ink,
-    padding: spacing.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.md,
     marginBottom: spacing.sm,
   },
 
   btn: {
     borderRadius: radius.md,
-    padding: spacing.md,
+    paddingVertical: spacing.md,
     alignItems: 'center',
     marginBottom: spacing.sm,
   },
@@ -273,10 +308,11 @@ const styles = StyleSheet.create({
     padding: spacing.md,
     marginBottom: spacing.sm,
   },
-  name: { color: colors.ink, fontWeight: '700' },
-  email: { color: colors.inkMuted, marginTop: spacing.xs },
 
-  actions: { flexDirection: 'row', alignItems: 'center', marginTop: spacing.sm },
+  name: { color: colors.ink, fontWeight: '700', fontSize: typography.sizes.base },
+  email: { color: colors.inkMuted, marginTop: spacing.xs, marginBottom: spacing.sm },
+
+  actions: { flexDirection: 'row', flexWrap: 'wrap' },
 
   btnGhost: {
     borderWidth: 1,
@@ -284,10 +320,22 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.md,
+    backgroundColor: colors.surface2,
     marginRight: spacing.sm,
+    marginBottom: spacing.sm,
   },
-  btnGhostText: { color: colors.inkMuted },
+  btnGhostText: { color: colors.inkMuted, fontWeight: '600' },
 
-  pageInfo: { color: colors.inkMuted },
+  pagination: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: spacing.sm,
+  },
+  pageInfo: { color: colors.inkMuted, fontSize: typography.sizes.xs },
+
+  loadingWrap: { alignItems: 'center', paddingVertical: spacing['2xl'] },
+  loadingText: { marginTop: spacing.sm, color: colors.inkMuted },
+
   error: { color: colors.error, marginBottom: spacing.sm },
 });
