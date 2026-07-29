@@ -9,7 +9,7 @@ export const typography = {
     '3xl': 28,
     '4xl': 32,
   },
-  
+
   weights: {
     light: '300',
     normal: '400',
@@ -18,16 +18,17 @@ export const typography = {
     bold: '700',
     extrabold: '900',
   },
-  
+
+  // React Native precisa de número absoluto, não multiplicador tipo 1.6
   lineHeights: {
-    tight: 1.2,
-    normal: 1.5,
-    relaxed: 1.6,
-    loose: 1.8,
+    tight: 20,
+    normal: 22,
+    relaxed: 24,
+    loose: 28,
   },
 };
 
 export const fontFamilies = {
-  display: 'Playfair Display', // For headings
-  body: 'DM Sans', // For body text
+  display: 'Playfair Display',
+  body: 'DM Sans',
 };

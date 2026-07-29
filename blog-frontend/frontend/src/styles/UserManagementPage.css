@@ -1,10 +1,22 @@
 .user-mgmt-page {
     min-height: 100vh;
     padding: clamp(16px, 4vw, 28px);
-    background: var(--bg);
+    background: #0f0e0b;
     position: relative;
     overflow: hidden;
-    color: var(--ink);
+    color: #f5f0e8;
+}
+
+.theme-student {
+    --accent: #7eb8f7;
+    --accent-bg: rgba(126, 184, 247, 0.1);
+    --accent-border: rgba(126, 184, 247, 0.2);
+}
+
+.theme-teacher {
+    --accent: #f7c97e;
+    --accent-bg: rgba(247, 201, 126, 0.1);
+    --accent-border: rgba(247, 201, 126, 0.2);
 }
 
 .user-mgmt-decor-line {
@@ -13,13 +25,13 @@
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    background: linear-gradient(90deg, var(--accent), rgba(255, 255, 255, 0.08));
 }
 
 .user-mgmt-bg-pattern {
     position: absolute;
     inset: 0;
-    background-image: radial-gradient(circle, rgba(193, 68, 14, 0.06) 1px, transparent 1px);
+    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
     background-size: 32px 32px;
     pointer-events: none;
 }
@@ -27,24 +39,25 @@
 .user-mgmt-card {
     position: relative;
     z-index: 1;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow);
-    padding: clamp(14px, 3vw, 20px);
-    margin: 0 auto 16px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+    padding: clamp(20px, 3vw, 28px);
+    margin: 0 auto 20px;
     max-width: 980px;
 }
 
 .user-mgmt-title {
-    font-family: var(--font-display);
-    font-size: clamp(22px, 4vw, 30px);
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(26px, 4vw, 34px);
+    color: #f5f0e8;
 }
 
 .user-mgmt-subtitle {
-    color: var(--ink-muted);
+    color: rgba(245, 240, 232, 0.6);
     text-transform: uppercase;
-    letter-spacing: .04em;
+    letter-spacing: .1em;
     font-size: 12px;
     margin-top: 6px;
 }
@@ -75,12 +88,19 @@
 
 .user-mgmt-input {
     width: 100%;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    color: var(--ink);
-    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
+    color: #f5f0e8;
+    padding: 14px 16px;
     margin-bottom: 4px;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.user-mgmt-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: rgba(255, 255, 255, 0.08);
 }
 
 .user-mgmt-row {
@@ -88,33 +108,44 @@
     align-items: center;
     gap: 8px;
     flex-wrap: wrap;
-    margin-top: 8px;
+    margin-top: 12px;
 }
 
 .user-mgmt-btn {
     border: none;
-    border-radius: var(--radius);
-    padding: 10px 12px;
+    border-radius: 14px;
+    padding: 12px 16px;
     transition: all .2s;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
 }
 
 .user-mgmt-btn-primary {
-    color: #fff;
-    background: linear-gradient(135deg, #c1440e, #7f2704);
+    color: #0f0e0b;
+    background: var(--accent);
 }
 
 .user-mgmt-btn-ghost {
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--ink-muted);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(245, 240, 232, 0.75);
 }
 
 .theme-student .user-mgmt-btn-primary {
-    background: linear-gradient(135deg, #2d6a4f, #1b4332);
+    background: var(--accent);
+}
+
+.theme-teacher .user-mgmt-btn-primary {
+    background: var(--accent);
+}
+
+.user-mgmt-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
 }
 
 .user-mgmt-btn:disabled {
-    opacity: .5;
+    opacity: .55;
     cursor: not-allowed;
 }
 
@@ -126,16 +157,31 @@
 .user-mgmt-table th,
 .user-mgmt-table td {
     text-align: left;
-    border-bottom: 1px solid var(--border);
-    padding: 10px 4px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 14px 12px;
+}
+
+.user-mgmt-table th {
+    color: rgba(245, 240, 232, 0.75);
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.user-mgmt-table td {
+    color: #f5f0e8;
 }
 
 .user-mgmt-muted {
-    color: var(--ink-muted);
+    color: rgba(245, 240, 232, 0.65);
 }
 
 .user-mgmt-error {
-    color: var(--accent);
+    color: #f87171;
+    background: rgba(248, 113, 113, 0.08);
+    border: 1px solid rgba(248, 113, 113, 0.2);
+    padding: 10px 14px;
+    border-radius: 12px;
     margin-bottom: 12px;
 }
 

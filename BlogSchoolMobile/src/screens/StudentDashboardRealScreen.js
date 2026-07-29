@@ -107,17 +107,27 @@ export default function StudentDashboardRealScreen({ navigation }) {
           <Text style={styles.brandIcon}>✏️</Text>
           <Text style={styles.brandText}>BlogSchool</Text>
         </View>
-        <TouchableOpacity
-          style={[styles.topbarBtn, { borderColor: colors.border, backgroundColor: theme.primaryLight }]}
-          onPress={handleLogout}
-        >
-          <Text style={[styles.topbarBtnText, { color: colors.ink }]}>Sair</Text>
-        </TouchableOpacity>
+
+        {user ? (
+          <TouchableOpacity
+            style={[styles.topbarBtn, { borderColor: colors.border, backgroundColor: theme.primaryLight }]}
+            onPress={handleLogout}
+          >
+            <Text style={[styles.topbarBtnText, { color: colors.ink }]}>Sair</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            style={[styles.topbarBtn, { borderColor: colors.border, backgroundColor: colors.surface2 }]}
+            onPress={() => navigation.navigate('TeacherLogin')}
+          >
+            <Text style={[styles.topbarBtnText, { color: colors.ink }]}>Entrar</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
         <Header
-          title={`Bem-vindo, ${user?.name || 'Aluno'} 👋`}
+          title={`Bem-vindo, ${user?.name || 'Visitante'} 👋`}
           subtitle="Explore os posts da sua turma."
         />
 
@@ -215,11 +225,7 @@ const styles = StyleSheet.create({
     color: colors.ink,
     fontSize: typography.sizes.base,
   },
-  clearBtn: {
-    position: 'absolute',
-    right: spacing.md,
-    top: spacing.md,
-  },
+  clearBtn: { position: 'absolute', right: spacing.md, top: spacing.md },
   clearBtnText: { color: colors.inkMuted, fontSize: typography.sizes.base, fontWeight: '700' },
 
   searchBtn: {

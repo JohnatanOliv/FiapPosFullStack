@@ -98,7 +98,7 @@ export default function ProfessorLoginPage() {
         </p>
 
         <p style={styles.footer}>
-          <Link to="/" style={styles.linkSecondary}>Voltar ao início</Link>
+          <Link to="/" style={styles.linkSecondary}>Voltar</Link>
         </p>
       </div>
 

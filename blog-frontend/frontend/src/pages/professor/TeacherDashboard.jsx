@@ -151,8 +151,8 @@ export default function TeacherDashboard({ user }) {
             <h2 className="dash-welcome">Olá, Prof. <em>{user?.name || "Professor"}</em> 👋</h2>
             <p className="dash-welcome-sub">Gerencie os posts do blog da sua turma.</p>
             <div style={{ marginTop: 10, display: "flex", gap: 10, flexWrap: "wrap" }}>
-              <Link className="link-btn" to="/admin/teachers">Gerenciar professores</Link>
-              <Link className="link-btn" to="/admin/students">Gerenciar alunos</Link>
+              <Link className="link-btn manage-btn" to="/admin/teachers">Gerenciar professores</Link>
+              <Link className="link-btn manage-btn" to="/admin/students">Gerenciar alunos</Link>
             </div>
           </div>
           <button className="new-post-btn" onClick={() => setFormOpen(true)}>

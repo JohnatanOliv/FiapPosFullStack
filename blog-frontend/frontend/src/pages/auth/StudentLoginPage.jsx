@@ -85,12 +85,12 @@ export default function StudentLoginPage() {
             onClick={() => navigate("/posts")}
             disabled={loading}
           >
-            Ver posts sem entrar
+            Visualização pública de posts
           </button>
         </form>
 
         <p style={styles.footer}>
-          <Link to="/" style={styles.link}>Voltar ao início</Link>
+          <Link to="/" style={styles.link}>Início</Link>
         </p>
       </div>
     </div>
