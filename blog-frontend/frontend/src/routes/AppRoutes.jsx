@@ -9,6 +9,7 @@ import ProfessorLoginPage from "../pages/auth/ProfessorLoginPage";
 import ProfessorRegisterPage from "../pages/auth/ProfessorRegisterPage";
 import StudentLoginPage from "../pages/auth/StudentLoginPage";
 import PostDetailsPage from "../pages/PostDetailsPage";
+import PublicPostsPage from "../pages/PublicPostsPage";
 import UserManagementPage from "../pages/admin/UserManagementPage";
 
 function AppRoutes() {
@@ -88,6 +89,7 @@ function AppRoutes() {
           }
         />
 
+        <Route path="/posts" element={<PublicPostsPage />} />
         <Route path="/posts/:id" element={<PostDetailsPage />} />
         <Route
           path="/admin/teachers"

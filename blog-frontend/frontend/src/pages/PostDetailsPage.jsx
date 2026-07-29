@@ -6,6 +6,7 @@ import { UserContext } from "../context/UserContextValue";
 export default function PostDetailsPage() {
   const { id } = useParams();
   const { user } = useContext(UserContext);
+  const isGuestViewer = !user;
   const navigate = useNavigate();
   const [post, setPost] = useState(null);
   const [comments, setComments] = useState([]);
@@ -106,9 +107,9 @@ export default function PostDetailsPage() {
 
             <section style={styles.section}>
               <h2 style={styles.sectionTitle}>Comentários</h2>
-              {!user && (
+              {isGuestViewer ? (
                 <p style={styles.muted}>
-                  Para comentar, faça login:
+                  Você está visualizando em modo leitura. Para comentar, faça login:
                   {" "}
                   <Link to="/student-login">Aluno</Link>
                   {" "}
@@ -116,19 +117,19 @@ export default function PostDetailsPage() {
                   {" "}
                   <Link to="/professor-login">Professor</Link>.
                 </p>
+              ) : (
+                <form onSubmit={handleCreateComment} style={styles.form}>
+                  <textarea
+                    value={commentText}
+                    onChange={(e) => setCommentText(e.target.value)}
+                    placeholder="Escreva seu comentário..."
+                    style={styles.textarea}
+                  />
+                  <button type="submit" style={styles.button}>
+                    Comentar
+                  </button>
+                </form>
               )}
-              <form onSubmit={handleCreateComment} style={styles.form}>
-                <textarea
-                  value={commentText}
-                  onChange={(e) => setCommentText(e.target.value)}
-                  placeholder="Escreva seu comentário..."
-                  style={styles.textarea}
-                  disabled={!user}
-                />
-                <button type="submit" style={styles.button} disabled={!user}>
-                  Comentar
-                </button>
-              </form>
 
               {comments.length === 0 ? (
                 <p style={styles.muted}>Ainda não há comentários.</p>

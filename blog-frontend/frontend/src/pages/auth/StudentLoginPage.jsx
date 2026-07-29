@@ -78,6 +78,15 @@ export default function StudentLoginPage() {
           <button style={styles.button} type="submit" disabled={loading}>
             {loading ? "Entrando..." : "Entrar"}
           </button>
+
+          <button
+            type="button"
+            style={{ ...styles.button, ...styles.secondaryButton }}
+            onClick={() => navigate("/posts")}
+            disabled={loading}
+          >
+            Ver posts sem entrar
+          </button>
         </form>
 
         <p style={styles.footer}>
@@ -125,6 +134,11 @@ const styles = {
     background: "var(--ink)",
     color: "#fff",
     cursor: "pointer",
+  },
+  secondaryButton: {
+    background: "var(--surface2)",
+    color: "var(--ink)",
+    border: "1px solid var(--border)",
   },
   footer: { marginTop: "16px", textAlign: "center" },
   link: { color: "var(--accent)", textDecoration: "none" },
