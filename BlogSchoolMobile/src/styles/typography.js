@@ -19,7 +19,6 @@ export const typography = {
     extrabold: '900',
   },
 
-  // React Native precisa de número absoluto, não multiplicador tipo 1.6
   lineHeights: {
     tight: 20,
     normal: 22,

@@ -6,13 +6,13 @@ import {
   SafeAreaView,
   TouchableOpacity,
   TextInput,
+  ActivityIndicator,
 } from 'react-native';
 import { colors } from '../styles/colors';
 import { spacing, radius } from '../styles/spacing';
 import { typography } from '../styles/typography';
 import { UserContext } from '../context/UserContext';
 import { api } from '../services/api';
-import AppLoading from '../components/AppLoading';
 
 export default function TeacherLoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -83,9 +83,8 @@ export default function TeacherLoginScreen({ navigation }) {
         {error ? <Text style={styles.error}>{error}</Text> : null}
 
         <TouchableOpacity style={styles.submitBtn} onPress={handleSubmit} disabled={loading}>
-          <Text style={styles.submitText}>{loading ? 'Entrando...' : 'Entrar'}</Text>
+          {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.submitText}>Entrar</Text>}
         </TouchableOpacity>
-        {loading ? <AppLoading message="Validando acesso..." /> : null}
 
         <TouchableOpacity onPress={() => navigation.navigate('TeacherRegister')}>
           <Text style={styles.registerBtn}>Criar conta de professor</Text>
@@ -122,12 +121,12 @@ const styles = StyleSheet.create({
   error: { color: colors.error, marginBottom: spacing.sm },
   submitBtn: {
     marginTop: spacing.md,
-    backgroundColor: colors.accentTeacher,
+    backgroundColor: colors.accentRed,
     borderRadius: radius.md,
     padding: spacing.md,
     alignItems: 'center',
   },
-  submitText: { color: colors.bg, fontWeight: '700' },
+  submitText: { color: '#fff', fontWeight: '700' },
   registerBtn: {
     color: colors.ink,
     marginTop: spacing.lg,

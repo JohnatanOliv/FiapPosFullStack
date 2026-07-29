@@ -1,31 +1,24 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { colors, studentTheme, teacherTheme } from '../styles/colors';
+import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
 import { spacing, radius } from '../styles/spacing';
 import { typography } from '../styles/typography';
+import { colors } from '../styles/colors';
 
-export default function HomeButton({ 
-  label, 
-  subtext, 
-  icon, 
-  onPress, 
-  theme = 'student' 
-}) {
-  const themeColor = theme === 'student' ? studentTheme : teacherTheme;
-  
+export default function HomeButton({ label, subtext, icon, onPress, theme = 'student' }) {
+  const isStudent = theme === 'student';
+
   return (
     <TouchableOpacity
       style={[
         styles.button,
-        {
-          borderColor: themeColor.primaryBorder,
-          backgroundColor: themeColor.primaryLight,
-        },
+        isStudent ? styles.studentButton : styles.teacherButton,
       ]}
       onPress={onPress}
-      activeOpacity={0.7}
+      activeOpacity={0.85}
     >
-      <Text style={styles.icon}>{icon}</Text>
+      <View style={styles.iconWrap}>
+        <Text style={styles.icon}>{icon}</Text>
+      </View>
       <Text style={styles.label}>{label}</Text>
       <Text style={styles.subtext}>{subtext}</Text>
     </TouchableOpacity>
@@ -35,23 +28,34 @@ export default function HomeButton({
 const styles = StyleSheet.create({
   button: {
     borderWidth: 1,
-    borderRadius: radius.md,
+    borderRadius: radius.lg,
     paddingVertical: spacing.xl,
     paddingHorizontal: spacing.lg,
     alignItems: 'center',
-    gap: spacing.md,
+    backgroundColor: colors.surface,
+    marginBottom: spacing.md,
+  },
+  studentButton: {
+    borderColor: 'rgba(126,184,247,0.25)',
+  },
+  teacherButton: {
+    borderColor: 'rgba(247,201,126,0.25)',
+  },
+  iconWrap: {
+    marginBottom: spacing.sm,
   },
   icon: {
     fontSize: 32,
   },
   label: {
-    fontSize: typography.sizes.lg,
-    fontWeight: '600',
+    fontSize: typography.sizes.xl,
+    fontWeight: '700',
     color: colors.ink,
+    marginBottom: spacing.xs,
   },
   subtext: {
-    fontSize: typography.sizes.xs,
+    fontSize: typography.sizes.sm,
     color: colors.inkMuted,
-    marginTop: spacing.sm,
+    textAlign: 'center',
   },
 });

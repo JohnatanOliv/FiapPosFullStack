@@ -23,12 +23,10 @@ const emptyPost = { title: '', content: '' };
 export default function TeacherDashboardRealScreen({ navigation }) {
   const { user, token, logout } = useContext(UserContext);
   const theme = useTheme();
-
   const [posts, setPosts] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-
   const [editingPost, setEditingPost] = useState(null);
   const [postForm, setPostForm] = useState(emptyPost);
 
@@ -55,7 +53,6 @@ export default function TeacherDashboardRealScreen({ navigation }) {
       content: cleanText(item?.content),
       excerpt: cleanText(item?.content),
       date: item?.createdAt ? new Date(item.createdAt).toLocaleDateString('pt-BR') : '-',
-      views: item?.views || 0,
     }));
 
   const loadPosts = async () => {
@@ -125,41 +122,35 @@ export default function TeacherDashboardRealScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.topbar}>
-        <View style={styles.brandWrap}>
-          <Text style={styles.brandIcon}>✏️</Text>
-          <Text style={styles.brandText}>BlogSchool</Text>
+      <View style={styles.header}>
+        <View style={styles.headerBrand}>
+          <Text style={styles.headerLogo}>✏️</Text>
+          <Text style={styles.headerTitle}>BlogSchool</Text>
         </View>
         <TouchableOpacity
-          style={[styles.topbarBtn, { borderColor: colors.border, backgroundColor: theme.primaryLight }]}
+          style={[styles.logoutBtn, { borderColor: colors.border, backgroundColor: theme.primaryLight }]}
           onPress={handleLogout}
         >
-          <Text style={styles.topbarBtnText}>Sair</Text>
+          <Text style={[styles.logoutBtnText, { color: theme.primary }]}>Sair</Text>
         </TouchableOpacity>
       </View>
 
       <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
         <Header
           title={`Olá, Prof. ${user?.name || ''} 👋`}
-          subtitle="Gerencie posts e usuários da turma."
+          subtitle="Gerencie os posts e os usuários da turma."
         />
 
-        <View style={styles.segmentRow}>
-          <TouchableOpacity
-            style={styles.segmentBtn}
-            onPress={() => navigation.navigate('ManageUsers', { role: 'teacher' })}
-          >
-            <Text style={styles.segmentBtnText}>Professores</Text>
+        <View style={styles.adminLinks}>
+          <TouchableOpacity style={styles.adminBtn} onPress={() => navigation.navigate('ManageUsers', { role: 'teacher' })}>
+            <Text style={styles.adminBtnText}>Professores</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.segmentBtn}
-            onPress={() => navigation.navigate('ManageUsers', { role: 'student' })}
-          >
-            <Text style={styles.segmentBtnText}>Alunos</Text>
+          <TouchableOpacity style={styles.adminBtn} onPress={() => navigation.navigate('ManageUsers', { role: 'student' })}>
+            <Text style={styles.adminBtnText}>Alunos</Text>
           </TouchableOpacity>
         </View>
 
-        <View style={styles.formCard}>
+        <View style={styles.card}>
           <Text style={styles.sectionTitle}>
             {editingPost ? 'Editar postagem' : 'Nova postagem'}
           </Text>
@@ -171,9 +162,8 @@ export default function TeacherDashboardRealScreen({ navigation }) {
             placeholder="Título"
             placeholderTextColor={colors.inkMuted}
           />
-
           <TextInput
-            style={[styles.input, styles.textarea]}
+            style={[styles.input, styles.textArea]}
             multiline
             value={postForm.content}
             onChangeText={(value) => setPostForm((old) => ({ ...old, content: value }))}
@@ -182,15 +172,11 @@ export default function TeacherDashboardRealScreen({ navigation }) {
             textAlignVertical="top"
           />
 
-          <TouchableOpacity
-            style={[styles.primaryBtn, { backgroundColor: colors.accentRed }]}
-            onPress={savePost}
-            disabled={saving}
-          >
+          <TouchableOpacity style={styles.btn} onPress={savePost} disabled={saving}>
             {saving ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <Text style={styles.primaryBtnText}>
+              <Text style={styles.btnText}>
                 {editingPost ? 'Salvar alterações' : 'Criar post'}
               </Text>
             )}
@@ -198,13 +184,13 @@ export default function TeacherDashboardRealScreen({ navigation }) {
 
           {editingPost ? (
             <TouchableOpacity
-              style={styles.ghostBtn}
+              style={styles.btnGhost}
               onPress={() => {
                 setEditingPost(null);
                 setPostForm(emptyPost);
               }}
             >
-              <Text style={styles.ghostBtnText}>Cancelar edição</Text>
+              <Text style={styles.btnGhostText}>Cancelar edição</Text>
             </TouchableOpacity>
           ) : null}
         </View>
@@ -223,18 +209,18 @@ export default function TeacherDashboardRealScreen({ navigation }) {
                 post={post}
                 onPress={() => navigation.navigate('PostDetails', { postId: post.id })}
               />
-              <View style={styles.actionRow}>
+              <View style={styles.actions}>
                 <TouchableOpacity
-                  style={styles.actionBtn}
+                  style={styles.btnGhost}
                   onPress={() => {
                     setEditingPost(post);
                     setPostForm({ title: post.title || '', content: post.content || '' });
                   }}
                 >
-                  <Text style={styles.actionBtnText}>Editar</Text>
+                  <Text style={styles.btnGhostText}>Editar</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.actionBtn} onPress={() => removePost(post.id)}>
-                  <Text style={styles.actionBtnText}>Excluir</Text>
+                <TouchableOpacity style={styles.btnGhost} onPress={() => removePost(post.id)}>
+                  <Text style={styles.btnGhostText}>Excluir</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -247,8 +233,7 @@ export default function TeacherDashboardRealScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
-
-  topbar: {
+  header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -256,27 +241,23 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.borderLight,
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
-    backgroundColor: colors.surface,
   },
-  brandWrap: { flexDirection: 'row', alignItems: 'center' },
-  brandIcon: { fontSize: 22, marginRight: spacing.sm },
-  brandText: { fontSize: typography.sizes.xl, fontWeight: '700', color: colors.ink },
-  topbarBtn: {
+  headerBrand: { flexDirection: 'row', alignItems: 'center' },
+  headerLogo: { fontSize: 22, marginRight: spacing.sm },
+  headerTitle: { fontSize: typography.sizes.xl, fontWeight: '700', color: colors.ink },
+  logoutBtn: {
     borderWidth: 1,
     borderRadius: radius.md,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
   },
-  topbarBtnText: { color: colors.ink, fontWeight: '700', fontSize: typography.sizes.xs },
+  logoutBtnText: { fontSize: typography.sizes.xs, fontWeight: '700' },
 
   content: { flex: 1 },
   contentContainer: { padding: spacing.lg, paddingBottom: spacing['3xl'] },
 
-  segmentRow: {
-    flexDirection: 'row',
-    marginBottom: spacing.md,
-  },
-  segmentBtn: {
+  adminLinks: { flexDirection: 'row', marginBottom: spacing.md },
+  adminBtn: {
     backgroundColor: colors.surface2,
     borderWidth: 1,
     borderColor: colors.border,
@@ -285,71 +266,52 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     marginRight: spacing.sm,
   },
-  segmentBtnText: { color: colors.ink, fontWeight: '600' },
+  adminBtnText: { color: colors.ink, fontWeight: '600' },
 
-  formCard: {
+  card: {
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: radius.lg,
+    borderRadius: radius.md,
     padding: spacing.md,
     marginBottom: spacing.md,
   },
-  sectionTitle: {
-    color: colors.ink,
-    fontWeight: '700',
-    fontSize: typography.sizes.lg,
-    marginBottom: spacing.sm,
-  },
-
+  sectionTitle: { color: colors.ink, fontWeight: '700', marginBottom: spacing.sm },
   input: {
     backgroundColor: colors.surface2,
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: radius.md,
     color: colors.ink,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.md,
+    padding: spacing.md,
     marginBottom: spacing.sm,
-    fontSize: typography.sizes.base,
   },
-  textarea: { minHeight: 110 },
-
-  primaryBtn: {
+  textArea: {
+    minHeight: 100,
+  },
+  btn: {
+    backgroundColor: colors.accentRed,
     borderRadius: radius.md,
+    padding: spacing.md,
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: spacing.md,
-    marginTop: spacing.xs,
+    marginBottom: spacing.sm,
   },
-  primaryBtnText: { color: '#fff', fontWeight: '700' },
-
-  ghostBtn: {
-    marginTop: spacing.sm,
+  btnText: { color: '#fff', fontWeight: '700' },
+  btnGhost: {
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: radius.md,
-    alignItems: 'center',
-    paddingVertical: spacing.sm,
-    backgroundColor: colors.surface2,
-  },
-  ghostBtnText: { color: colors.inkMuted, fontWeight: '600' },
-
-  loadingWrap: { alignItems: 'center', paddingVertical: spacing['2xl'] },
-  loadingText: { color: colors.inkMuted, marginTop: spacing.sm },
-
-  postWrap: { marginBottom: spacing.md },
-  actionRow: { flexDirection: 'row', marginTop: -spacing.xs },
-  actionBtn: {
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.surface,
     borderRadius: radius.md,
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.md,
     marginRight: spacing.sm,
+    marginBottom: spacing.sm,
   },
-  actionBtnText: { color: colors.inkMuted, fontWeight: '600' },
+  btnGhostText: { color: colors.inkMuted },
+  actions: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: spacing.md },
+  postWrap: { marginBottom: spacing.sm },
+
+  loadingWrap: { alignItems: 'center', paddingVertical: spacing['2xl'] },
+  loadingText: { color: colors.inkMuted, marginTop: spacing.sm },
 
   error: { color: colors.error, marginBottom: spacing.sm },
 });

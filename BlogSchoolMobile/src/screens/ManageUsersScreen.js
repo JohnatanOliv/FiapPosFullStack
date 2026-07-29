@@ -53,25 +53,19 @@ export default function ManageUsersScreen({ route }) {
         remove: (id) => api.deleteStudent(id, token),
       };
 
-  const primaryColor = role === 'teacher' ? colors.accentRed : colors.accentGreen;
-
-  const normalizeList = (response, nextPage) => {
-    const dataList = response?.data?.data ?? response?.data ?? [];
-    const pageInfo =
-      response?.data?.pagination ??
-      response?.pagination ??
-      { page: nextPage, totalPages: 1 };
-
-    setItems(Array.isArray(dataList) ? dataList : []);
-    setPagination(pageInfo);
-  };
-
   const load = async (nextPage = page, q = search) => {
     setLoading(true);
     setError('');
     try {
       const response = await service.list(nextPage, q);
-      normalizeList(response, nextPage);
+      const dataList = response?.data?.data ?? response?.data ?? [];
+      const pageInfo =
+        response?.data?.pagination ??
+        response?.pagination ??
+        { page: nextPage, totalPages: 1 };
+
+      setItems(Array.isArray(dataList) ? dataList : []);
+      setPagination(pageInfo);
     } catch (err) {
       setItems([]);
       setPagination({ page: 1, totalPages: 1 });
@@ -105,7 +99,6 @@ export default function ManageUsersScreen({ route }) {
           password: form.password.trim(),
         });
       }
-
       setEditing(null);
       setForm(initialForm);
       await load(page, search);
@@ -114,16 +107,12 @@ export default function ManageUsersScreen({ route }) {
     }
   };
 
+  const primaryColor = role === 'teacher' ? colors.accentRed : colors.accentGreen;
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.header}>
-          <Text style={styles.logo}>{role === 'teacher' ? '👨‍🏫' : '👨‍🎓'}</Text>
-          <Text style={styles.title}>{labels.plural}</Text>
-          <Text style={styles.subtitle}>Gerenciamento da turma</Text>
-        </View>
-
-        <View style={styles.divider} />
+        <Text style={styles.title}>{labels.plural}</Text>
 
         <TextInput
           style={styles.input}
@@ -132,13 +121,7 @@ export default function ManageUsersScreen({ route }) {
           placeholder={`Buscar ${labels.plural.toLowerCase()}...`}
           placeholderTextColor={colors.inkMuted}
         />
-        <TouchableOpacity
-          style={[styles.btn, { backgroundColor: primaryColor }]}
-          onPress={() => {
-            setPage(1);
-            load(1, search);
-          }}
-        >
+        <TouchableOpacity style={[styles.btn, { backgroundColor: primaryColor }]} onPress={() => { setPage(1); load(1, search); }}>
           <Text style={styles.btnText}>Buscar</Text>
         </TouchableOpacity>
 
@@ -174,18 +157,6 @@ export default function ManageUsersScreen({ route }) {
           <TouchableOpacity style={[styles.btn, { backgroundColor: primaryColor }]} onPress={submit}>
             <Text style={styles.btnText}>{editing ? 'Salvar' : 'Cadastrar'}</Text>
           </TouchableOpacity>
-
-          {editing ? (
-            <TouchableOpacity
-              style={styles.btnGhost}
-              onPress={() => {
-                setEditing(null);
-                setForm(initialForm);
-              }}
-            >
-              <Text style={styles.btnGhostText}>Cancelar edição</Text>
-            </TouchableOpacity>
-          ) : null}
         </View>
 
         {error ? <Text style={styles.error}>{error}</Text> : null}
@@ -202,7 +173,6 @@ export default function ManageUsersScreen({ route }) {
               <View key={itemId} style={styles.card}>
                 <Text style={styles.name}>{item.name}</Text>
                 <Text style={styles.email}>{item.email}</Text>
-
                 <View style={styles.actions}>
                   <TouchableOpacity
                     style={styles.btnGhost}
@@ -213,7 +183,6 @@ export default function ManageUsersScreen({ route }) {
                   >
                     <Text style={styles.btnGhostText}>Editar</Text>
                   </TouchableOpacity>
-
                   <TouchableOpacity
                     style={styles.btnGhost}
                     onPress={async () => {
@@ -266,35 +235,21 @@ export default function ManageUsersScreen({ route }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
   content: { padding: spacing.lg, paddingBottom: spacing['3xl'] },
-
-  header: { alignItems: 'center', marginBottom: spacing.lg },
-  logo: { fontSize: 42, marginBottom: spacing.sm },
-  title: { color: colors.ink, fontSize: typography.sizes['3xl'], fontWeight: '700' },
-  subtitle: {
-    color: colors.inkMuted,
-    fontSize: typography.sizes.xs,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    marginTop: spacing.xs,
-  },
-  divider: { height: 1, backgroundColor: colors.borderLight, marginBottom: spacing.lg },
-
+  title: { color: colors.ink, fontSize: typography.sizes['2xl'], fontWeight: '700', marginBottom: spacing.md },
   sectionTitle: { color: colors.ink, marginBottom: spacing.sm, fontWeight: '700' },
 
   input: {
-    backgroundColor: colors.surface,
+    backgroundColor: colors.surface2,
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: radius.md,
     color: colors.ink,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.md,
+    padding: spacing.md,
     marginBottom: spacing.sm,
   },
-
   btn: {
     borderRadius: radius.md,
-    paddingVertical: spacing.md,
+    padding: spacing.md,
     alignItems: 'center',
     marginBottom: spacing.sm,
   },
@@ -304,27 +259,24 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: radius.lg,
+    borderRadius: radius.md,
     padding: spacing.md,
     marginBottom: spacing.sm,
   },
+  name: { color: colors.ink, fontWeight: '700' },
+  email: { color: colors.inkMuted, marginTop: spacing.xs },
 
-  name: { color: colors.ink, fontWeight: '700', fontSize: typography.sizes.base },
-  email: { color: colors.inkMuted, marginTop: spacing.xs, marginBottom: spacing.sm },
-
-  actions: { flexDirection: 'row', flexWrap: 'wrap' },
-
+  actions: { flexDirection: 'row', flexWrap: 'wrap', marginTop: spacing.sm },
   btnGhost: {
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: radius.md,
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.md,
-    backgroundColor: colors.surface2,
     marginRight: spacing.sm,
     marginBottom: spacing.sm,
   },
-  btnGhostText: { color: colors.inkMuted, fontWeight: '600' },
+  btnGhostText: { color: colors.inkMuted },
 
   pagination: {
     flexDirection: 'row',
@@ -332,10 +284,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: spacing.sm,
   },
-  pageInfo: { color: colors.inkMuted, fontSize: typography.sizes.xs },
-
-  loadingWrap: { alignItems: 'center', paddingVertical: spacing['2xl'] },
-  loadingText: { marginTop: spacing.sm, color: colors.inkMuted },
-
+  pageInfo: { color: colors.inkMuted },
+  loadingWrap: { alignItems: 'center', paddingVertical: spacing.xl },
+  loadingText: { color: colors.inkMuted, marginTop: spacing.sm },
   error: { color: colors.error, marginBottom: spacing.sm },
 });

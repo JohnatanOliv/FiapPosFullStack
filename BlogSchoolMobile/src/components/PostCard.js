@@ -9,10 +9,12 @@ export default function PostCard({ post, onPress }) {
     <TouchableOpacity
       style={[styles.card, shadows.md]}
       onPress={onPress}
-      activeOpacity={0.7}
+      activeOpacity={0.85}
     >
       <View style={styles.meta}>
-        <Text style={styles.author}>{post.author}</Text>
+        <Text style={styles.author} numberOfLines={1}>
+          {post.author}
+        </Text>
         <Text style={styles.date}>{post.date}</Text>
       </View>
 
@@ -40,27 +42,28 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: spacing.md,
+    marginBottom: spacing.sm,
   },
   author: {
     fontSize: typography.sizes.xs,
     color: colors.inkMuted,
+    maxWidth: '68%',
   },
   date: {
     fontSize: typography.sizes.xs,
     color: colors.inkMuted,
-    opacity: 0.6,
+    opacity: 0.7,
   },
   title: {
     fontSize: typography.sizes.lg,
     fontWeight: '700',
     color: colors.ink,
-    marginBottom: spacing.md,
-    lineHeight: typography.lineHeights.tight,
+    marginBottom: spacing.sm,
+    lineHeight: 24,
   },
   excerpt: {
     fontSize: typography.sizes.base,
     color: colors.inkMuted,
-    lineHeight: typography.lineHeights.normal,
+    lineHeight: 22,
   },
 });

@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  SafeAreaView,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
 import HomeButton from '../components/HomeButton';
 import { colors } from '../styles/colors';
 import { spacing } from '../styles/spacing';
@@ -13,7 +7,6 @@ import { typography } from '../styles/typography';
 
 export default function HomeScreen({ navigation }) {
   const handleStudentPress = () => {
-    // visitante pode ver posts sem login
     navigation.replace('StudentDashboard');
   };
 

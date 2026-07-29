@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   TextInput,
   ActivityIndicator,
-  Image,
 } from 'react-native';
 import { UserContext } from '../context/UserContext';
 import { useTheme } from '../hooks/useTheme';
@@ -50,7 +49,6 @@ export default function StudentDashboardRealScreen({ navigation }) {
       content: cleanText(item?.content),
       excerpt: cleanText(item?.content),
       date: item?.createdAt ? new Date(item.createdAt).toLocaleDateString('pt-BR') : '-',
-      views: item?.views || 0,
     }));
 
   const loadPosts = async () => {
@@ -102,25 +100,25 @@ export default function StudentDashboardRealScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.topbar}>
-        <View style={styles.brandWrap}>
-          <Text style={styles.brandIcon}>✏️</Text>
-          <Text style={styles.brandText}>BlogSchool</Text>
+      <View style={styles.header}>
+        <View style={styles.headerBrand}>
+          <Text style={styles.headerLogo}>✏️</Text>
+          <Text style={styles.headerTitle}>BlogSchool</Text>
         </View>
 
         {user ? (
           <TouchableOpacity
-            style={[styles.topbarBtn, { borderColor: colors.border, backgroundColor: theme.primaryLight }]}
+            style={[styles.topBtn, { borderColor: colors.border, backgroundColor: theme.primaryLight }]}
             onPress={handleLogout}
           >
-            <Text style={[styles.topbarBtnText, { color: colors.ink }]}>Sair</Text>
+            <Text style={[styles.topBtnText, { color: theme.primary }]}>Sair</Text>
           </TouchableOpacity>
         ) : (
           <TouchableOpacity
-            style={[styles.topbarBtn, { borderColor: colors.border, backgroundColor: colors.surface2 }]}
-            onPress={() => navigation.navigate('TeacherLogin')}
+            style={[styles.topBtn, { borderColor: colors.border, backgroundColor: colors.surface2 }]}
+            onPress={() => navigation.navigate('StudentLogin')}
           >
-            <Text style={[styles.topbarBtnText, { color: colors.ink }]}>Entrar</Text>
+            <Text style={styles.topBtnText}>Entrar</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -128,10 +126,10 @@ export default function StudentDashboardRealScreen({ navigation }) {
       <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
         <Header
           title={`Bem-vindo, ${user?.name || 'Visitante'} 👋`}
-          subtitle="Explore os posts da sua turma."
+          subtitle="Explore os posts do blog da sua turma."
         />
 
-        <View style={styles.searchRow}>
+        <View style={styles.searchBar}>
           <TextInput
             style={styles.searchInput}
             placeholder="Buscar por título, conteúdo ou autor..."
@@ -156,7 +154,6 @@ export default function StudentDashboardRealScreen({ navigation }) {
 
         {loading ? (
           <View style={styles.loading}>
-            <Image source={require('../../assets/alunoeprof.png')} style={styles.loadingLogo} resizeMode="contain" />
             <ActivityIndicator size="small" color={theme.primary} />
             <Text style={styles.loadingText}>Carregando posts...</Text>
           </View>
@@ -188,35 +185,32 @@ export default function StudentDashboardRealScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
-
-  topbar: {
+  header: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
+    alignItems: 'center',
     borderBottomWidth: 1,
     borderBottomColor: colors.borderLight,
-    backgroundColor: colors.surface,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
   },
-  brandWrap: { flexDirection: 'row', alignItems: 'center' },
-  brandIcon: { fontSize: 22, marginRight: spacing.sm },
-  brandText: { fontSize: typography.sizes.xl, fontWeight: '700', color: colors.ink },
-
-  topbarBtn: {
+  headerBrand: { flexDirection: 'row', alignItems: 'center' },
+  headerLogo: { fontSize: 22, marginRight: spacing.sm },
+  headerTitle: { fontSize: typography.sizes.xl, fontWeight: '700', color: colors.ink },
+  topBtn: {
     borderWidth: 1,
     borderRadius: radius.md,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
   },
-  topbarBtnText: { fontSize: typography.sizes.xs, fontWeight: '700' },
+  topBtnText: { color: colors.ink, fontSize: typography.sizes.xs, fontWeight: '700' },
 
   content: { flex: 1 },
   contentContainer: { padding: spacing.lg, paddingBottom: spacing['3xl'] },
 
-  searchRow: { position: 'relative', marginBottom: spacing.sm },
+  searchBar: { position: 'relative', marginBottom: spacing.md },
   searchInput: {
-    backgroundColor: colors.surface,
+    backgroundColor: colors.surface2,
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: radius.md,
@@ -226,22 +220,25 @@ const styles = StyleSheet.create({
     fontSize: typography.sizes.base,
   },
   clearBtn: { position: 'absolute', right: spacing.md, top: spacing.md },
-  clearBtnText: { color: colors.inkMuted, fontSize: typography.sizes.base, fontWeight: '700' },
+  clearBtnText: { color: colors.inkMuted, fontWeight: '700' },
 
   searchBtn: {
-    borderRadius: radius.md,
     paddingVertical: spacing.md,
+    borderRadius: radius.md,
     alignItems: 'center',
     marginBottom: spacing.lg,
   },
-  searchBtnText: { color: '#fff', fontWeight: '700', fontSize: typography.sizes.base },
+  searchBtnText: {
+    color: colors.bg,
+    fontWeight: '700',
+    fontSize: typography.sizes.base,
+  },
 
   loading: { alignItems: 'center', paddingVertical: spacing['2xl'] },
-  loadingLogo: { width: 86, height: 86, marginBottom: spacing.sm },
-  loadingText: { color: colors.inkMuted, marginTop: spacing.sm, fontSize: typography.sizes.sm },
+  loadingText: { marginTop: spacing.sm, color: colors.inkMuted },
 
   empty: { alignItems: 'center', paddingVertical: spacing['2xl'] },
-  emptyIcon: { fontSize: 44, marginBottom: spacing.sm },
+  emptyIcon: { fontSize: 48, marginBottom: spacing.md },
   emptyText: { color: colors.inkMuted, fontSize: typography.sizes.base },
 
   postCount: {
@@ -249,8 +246,6 @@ const styles = StyleSheet.create({
     fontSize: typography.sizes.xs,
     textTransform: 'uppercase',
     marginBottom: spacing.md,
-    letterSpacing: 0.6,
-    fontWeight: '600',
   },
   errorText: { color: colors.error, marginTop: spacing.sm },
 });

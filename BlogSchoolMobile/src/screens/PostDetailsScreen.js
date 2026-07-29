@@ -52,7 +52,13 @@ export default function PostDetailsScreen({ route, navigation }) {
   }, [postId]);
 
   const addComment = async () => {
+    if (!token) {
+      setError('Faça login para comentar.');
+      return;
+    }
+
     if (!commentText.trim()) return;
+
     setError('');
     try {
       await api.createComment(postId, commentText.trim(), token);
@@ -95,17 +101,25 @@ export default function PostDetailsScreen({ route, navigation }) {
             <Text style={styles.body}>{post?.content || ''}</Text>
 
             <Text style={styles.commentsTitle}>Comentários</Text>
+
             <TextInput
               style={styles.commentInput}
               multiline
-              placeholder="Escreva um comentário..."
+              placeholder={token ? 'Escreva um comentário...' : 'Faça login para comentar'}
               placeholderTextColor={colors.inkMuted}
               value={commentText}
               onChangeText={setCommentText}
               textAlignVertical="top"
+              editable={!!token}
             />
-            <TouchableOpacity style={styles.commentBtn} onPress={addComment}>
-              <Text style={styles.commentBtnText}>Comentar</Text>
+
+            <TouchableOpacity
+              style={[styles.commentBtn, !token && styles.commentBtnDisabled]}
+              onPress={addComment}
+            >
+              <Text style={styles.commentBtnText}>
+                {token ? 'Comentar' : 'Entrar para comentar'}
+              </Text>
             </TouchableOpacity>
 
             {error ? <Text style={styles.error}>{error}</Text> : null}
@@ -144,7 +158,7 @@ const styles = StyleSheet.create({
 
   backBtn: { color: colors.inkMuted, marginBottom: spacing.md, fontWeight: '600' },
 
-  loadingWrap: { alignItems: 'center', paddingVertical: spacing['2xl'] },
+  loadingWrap: { alignItems: 'center', paddingVertical: spacing.xl },
   loadingText: { color: colors.inkMuted, marginTop: spacing.sm },
 
   title: { color: colors.ink, fontSize: typography.sizes['2xl'], fontWeight: '700' },
@@ -159,12 +173,13 @@ const styles = StyleSheet.create({
     fontSize: typography.sizes.lg,
   },
   commentInput: {
-    backgroundColor: colors.surface,
+    backgroundColor: colors.surface2,
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: radius.md,
     color: colors.ink,
-    minHeight: 96,
+    minHeight: 90,
+    textAlignVertical: 'top',
     padding: spacing.md,
   },
   commentBtn: {
@@ -173,6 +188,9 @@ const styles = StyleSheet.create({
     padding: spacing.md,
     borderRadius: radius.md,
     alignItems: 'center',
+  },
+  commentBtnDisabled: {
+    opacity: 0.65,
   },
   commentBtnText: { color: '#fff', fontWeight: '700' },
 
@@ -184,9 +202,8 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     padding: spacing.md,
   },
-  commentMeta: { color: colors.inkMuted, fontSize: typography.sizes.xs, marginBottom: spacing.xs },
-  commentText: { color: colors.ink },
-  deleteText: { color: colors.error, marginTop: spacing.sm, fontWeight: '600' },
-
+  commentMeta: { color: colors.inkMuted, fontSize: typography.sizes.xs },
+  commentText: { color: colors.ink, marginTop: spacing.xs },
+  deleteText: { color: colors.error, marginTop: spacing.sm },
   error: { color: colors.error, marginTop: spacing.sm },
 });

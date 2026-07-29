@@ -27,7 +27,7 @@ function AppStack() {
         gestureEnabled: true,
       }}
     >
-      <Stack.Screen name="Home" component={HomeScreen} options={{ animationEnabled: false }} />
+      <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="StudentLogin" component={StudentLoginScreen} />
       <Stack.Screen name="StudentDashboard" component={StudentDashboardScreen} />
       <Stack.Screen name="TeacherLogin" component={TeacherLoginScreen} />
@@ -44,7 +44,7 @@ export default function App() {
     <UserProvider>
       <NavigationContainer>
         <AppStack />
-        <StatusBar style="dark" backgroundColor={colors.bg} />
+        <StatusBar style="light" backgroundColor={colors.bg} />
       </NavigationContainer>
     </UserProvider>
   );

@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import {
-    View,
-    Text,
-    StyleSheet,
-    SafeAreaView,
-    TouchableOpacity,
-    TextInput,
+  View,
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  TouchableOpacity,
+  TextInput,
+  ActivityIndicator,
 } from 'react-native';
 import { colors } from '../styles/colors';
 import { spacing, radius } from '../styles/spacing';
@@ -13,102 +14,124 @@ import { typography } from '../styles/typography';
 import { api } from '../services/api';
 
 export default function TeacherRegisterScreen({ navigation }) {
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
-    const [loading, setLoading] = useState(false);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
 
-    const handleRegister = async () => {
-        setError('');
-        setSuccess('');
+  const handleRegister = async () => {
+    setError('');
+    setSuccess('');
 
-        if (!name.trim() || !email.trim() || !password.trim()) {
-            setError('Preencha nome, email e senha.');
-            return;
-        }
+    if (!name.trim() || !email.trim() || !password.trim()) {
+      setError('Preencha nome, email e senha.');
+      return;
+    }
 
-        setLoading(true);
-        try {
-            await api.registerUser(name.trim(), email.trim(), password.trim(), 'teacher');
-            setSuccess('Professor cadastrado com sucesso!');
-            setTimeout(() => navigation.replace('TeacherLogin'), 900);
-        } catch (err) {
-            setError(err?.message || 'Falha ao cadastrar professor.');
-        } finally {
-            setLoading(false);
-        }
-    };
+    setLoading(true);
+    try {
+      await api.registerUser(name.trim(), email.trim(), password.trim(), 'teacher');
+      setSuccess('Professor cadastrado com sucesso!');
+      setTimeout(() => {
+        navigation.replace('TeacherLogin');
+      }, 900);
+    } catch (err) {
+      setError(err?.message || 'Falha ao cadastrar professor.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    return (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.content}>
-                <Text style={styles.title}>Cadastro de Professor</Text>
-                <Text style={styles.subtitle}>Crie sua conta para gerenciar posts.</Text>
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.content}>
+        <Text style={styles.title}>Cadastro de Professor</Text>
+        <Text style={styles.subtitle}>Crie sua conta para gerenciar posts.</Text>
 
-                <TextInput
-                    style={styles.input}
-                    placeholder="Nome"
-                    placeholderTextColor={colors.inkMuted}
-                    value={name}
-                    onChangeText={setName}
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Email"
-                    placeholderTextColor={colors.inkMuted}
-                    value={email}
-                    onChangeText={setEmail}
-                    autoCapitalize="none"
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Senha"
-                    placeholderTextColor={colors.inkMuted}
-                    value={password}
-                    onChangeText={setPassword}
-                    secureTextEntry
-                />
+        <Text style={styles.label}>Nome</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Seu nome"
+          placeholderTextColor={colors.inkMuted}
+          value={name}
+          onChangeText={(value) => {
+            setName(value);
+            setError('');
+          }}
+        />
 
-                {error ? <Text style={styles.error}>{error}</Text> : null}
-                {success ? <Text style={styles.success}>{success}</Text> : null}
+        <Text style={styles.label}>Email</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="professor@email.com"
+          placeholderTextColor={colors.inkMuted}
+          value={email}
+          onChangeText={(value) => {
+            setEmail(value);
+            setError('');
+          }}
+          autoCapitalize="none"
+        />
 
-                <TouchableOpacity style={styles.submitBtn} onPress={handleRegister} disabled={loading}>
-                    <Text style={styles.submitText}>{loading ? 'Cadastrando...' : 'Cadastrar'}</Text>
-                </TouchableOpacity>
+        <Text style={styles.label}>Senha</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Digite uma senha"
+          placeholderTextColor={colors.inkMuted}
+          value={password}
+          onChangeText={(value) => {
+            setPassword(value);
+            setError('');
+          }}
+          secureTextEntry
+        />
 
-                <TouchableOpacity onPress={() => navigation.replace('TeacherLogin')}>
-                    <Text style={styles.backBtn}>Voltar para login</Text>
-                </TouchableOpacity>
-            </View>
-        </SafeAreaView>
-    );
+        {error ? <Text style={styles.error}>{error}</Text> : null}
+        {success ? <Text style={styles.success}>{success}</Text> : null}
+
+        <TouchableOpacity style={styles.submitBtn} onPress={handleRegister} disabled={loading}>
+          {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.submitText}>Cadastrar</Text>}
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => navigation.replace('TeacherLogin')}>
+          <Text style={styles.backBtn}>Voltar para login</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: colors.bg },
-    content: { flex: 1, padding: spacing.lg, justifyContent: 'center' },
-    title: { color: colors.ink, fontSize: typography.sizes['3xl'], fontWeight: '700' },
-    subtitle: { color: colors.inkMuted, marginTop: spacing.xs, marginBottom: spacing.xl },
-    input: {
-        backgroundColor: colors.surface,
-        borderWidth: 1,
-        borderColor: colors.border,
-        borderRadius: radius.md,
-        color: colors.ink,
-        padding: spacing.md,
-        marginBottom: spacing.md,
-    },
-    submitBtn: {
-        marginTop: spacing.md,
-        backgroundColor: colors.accentRed,
-        borderRadius: radius.md,
-        padding: spacing.md,
-        alignItems: 'center',
-    },
-    submitText: { color: '#fff', fontWeight: '700' },
-    backBtn: { color: colors.inkMuted, marginTop: spacing.lg, textAlign: 'center' },
-    error: { color: colors.error, marginBottom: spacing.sm },
-    success: { color: colors.success, marginBottom: spacing.sm },
+  container: { flex: 1, backgroundColor: colors.bg },
+  content: { flex: 1, padding: spacing.lg, justifyContent: 'center' },
+  title: { color: colors.ink, fontSize: typography.sizes['3xl'], fontWeight: '700' },
+  subtitle: { color: colors.inkMuted, marginTop: spacing.xs, marginBottom: spacing.xl },
+  label: {
+    color: colors.inkMuted,
+    fontSize: typography.sizes.xs,
+    marginBottom: spacing.xs,
+    textTransform: 'uppercase',
+  },
+  input: {
+    backgroundColor: colors.surface2,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.md,
+    color: colors.ink,
+    padding: spacing.md,
+    marginBottom: spacing.md,
+  },
+  submitBtn: {
+    marginTop: spacing.md,
+    backgroundColor: colors.accentRed,
+    borderRadius: radius.md,
+    padding: spacing.md,
+    alignItems: 'center',
+  },
+  submitText: { color: '#fff', fontWeight: '700' },
+  backBtn: { color: colors.inkMuted, marginTop: spacing.lg, textAlign: 'center' },
+  error: { color: colors.error, marginBottom: spacing.sm },
+  success: { color: colors.success, marginBottom: spacing.sm },
 });
