@@ -1,258 +1,234 @@
-# 🎉 BlogSchool Mobile - Projeto Completo
+# BlogSchool - Documentação Completa do Projeto
 
-## 📊 Resumo Final do Trabalho
+## 1. Introdução
 
-Implementei um **aplicativo mobile completo em React Native (Expo)** que replica o layout do BlogSchool web. O projeto está **100% funcional** e pronto para usar.
+O BlogSchool é uma aplicação full stack desenvolvida para simular um sistema de publicação e gestão de conteúdo escolar, com foco em três frentes:
 
----
+- Backend para persistência e regras de negócio
+- Frontend web para navegação e interação do usuário
+- Aplicativo mobile para acesso rápido e experiência móvel
 
-## ✅ Tudo Que Foi Criado
+A proposta do projeto é oferecer uma plataforma onde professores e alunos possam interagir de forma organizada, com posts, comentários e gestão de contas.
 
-### 📱 **4 Telas Funcionais**
-1. **HomeScreen** - Seleção de papel (Aluno/Professor)
-2. **StudentDashboardScreen** - Visualização de posts para alunos
-3. **TeacherLoginScreen** - Login com código de segurança
-4. **TeacherDashboardScreen** - Gerenciamento de posts para professores
+## 2. Objetivo do Sistema
 
-### 🧩 **3 Componentes Reutilizáveis**
-1. **HomeButton** - Botão temático com suporte a Aluno/Professor
-2. **Header** - Cabeçalho com nome do usuário e logout
-3. **PostCard** - Card para exibição de posts
+O sistema tem como objetivo central permitir:
 
-### 🎨 **Sistema de Design Completo**
-- **colors.js** - Paleta de cores (dark mode, temas por papel)
-- **typography.js** - Tipografia padronizada
-- **spacing.js** - Espaçamento, raios, sombras
+- Publicar conteúdo em formato de posts
+- Exibir conteúdo para usuários autenticados e visitantes
+- Gerenciar usuários com diferentes perfis
+- Prover uma experiência completa para web e mobile
 
-### 🔄 **Gestão de Estado Global**
-- **UserContext.js** - Contexto para usuário e papel (aluno/professor)
-- **useTheme.js** - Hook para aplicar tema correto
+## 3. Arquitetura do Projeto
 
-### 🗺️ **Navegação Completa**
-- **App.js** - Stack Navigation com 4 telas
-- Transições suaves entre telas
-- Logout e volta para Home
+A aplicação está dividida em três módulos independentes, porém integrados:
 
-### 📚 **Documentação Abrangente**
-- **README.md** - Documentação geral (6.2 KB)
-- **GUIA_RAPIDO.md** - Quickstart e customização (4.7 KB)
-- **CHECKLIST.md** - Checklist de implementação (5.9 KB)
-- **RESUMO_IMPLEMENTACAO.md** - Resumo executivo (9.5 KB)
-- **INICIO_RAPIDO.md** - Instruções passo a passo (6.0 KB)
-- **.env.example** - Template de variáveis de ambiente
+### 3.1 Backend - API REST
+Localização: blog-api
 
----
+Responsável por:
+- Receber e processar requisições HTTP
+- Validar dados de entrada
+- Aplicar regras de autenticação e autorização
+- Persistir informação no banco MongoDB
+- Expor endpoints para consumo do frontend e do mobile
 
-## 📁 Estrutura do Projeto
+### 3.2 Frontend Web
+Localização: blog-frontend/frontend
 
+Responsável por:
+- Apresentar as páginas da aplicação
+- Consumir a API backend
+- Gerenciar navegação entre telas e rotas
+- Exibir dashboards e páginas públicas
+
+### 3.3 Mobile
+Localização: BlogSchoolMobile
+
+Responsável por:
+- Reproduzir a experiência do sistema em dispositivos móveis
+- Navegar entre telas de login, dashboard e detalhes de post
+- Apresentar o conteúdo de forma responsiva para usuários mobile
+
+## 4. Estrutura de Pastas
+
+```text
+FiapPosFullStack/
+├── blog-api/
+│   ├── src/
+│   │   ├── controllers/
+│   │   ├── middleware/
+│   │   ├── models/
+│   │   ├── routes/
+│   │   ├── app.js
+│   │   └── server.js
+│   └── tests/
+├── blog-frontend/
+│   └── frontend/
+│       ├── src/
+│       │   ├── components/
+│       │   ├── context/
+│       │   ├── hooks/
+│       │   ├── pages/
+│       │   ├── routes/
+│       │   └── services
+├── BlogSchoolMobile/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── context/
+│   │   ├── hooks/
+│   │   ├── screens/
+│   │   ├── services/
+│   │   └── styles
 ```
-BlogSchoolMobile/
-├── App.js (Navegação com React Navigation)
-├── package.json (Dependências)
-├── README.md
-├── GUIA_RAPIDO.md
-├── CHECKLIST.md
-├── RESUMO_IMPLEMENTACAO.md
-├── INICIO_RAPIDO.md
-├── .env.example
-└── src/
-    ├── components/
-    │   ├── Header.js (Cabeçalho)
-    │   ├── HomeButton.js (Botão temático)
-    │   └── PostCard.js (Card de post)
-    │
-    ├── context/
-    │   └── UserContext.js (Estado global)
-    │
-    ├── hooks/
-    │   └── useTheme.js (Tema por papel)
-    │
-    ├── screens/
-    │   ├── HomeScreen.js (Seleção)
-    │   ├── StudentDashboardScreen.js (Posts)
-    │   ├── TeacherLoginScreen.js (Login)
-    │   └── TeacherDashboardScreen.js (Gerenciamento)
-    │
-    └── styles/
-        ├── colors.js (Paleta)
-        ├── typography.js (Fontes)
-        └── spacing.js (Espaçamento)
+
+## 5. Funcionalidades Implementadas
+
+### 5.1 Backend
+- Cadastro de usuários
+- Login com retorno de token
+- Proteção de rotas com autenticação
+- Controle de acesso por papel
+- CRUD completo de posts
+- Busca de posts por termo
+- Gerenciamento de comentários
+
+### 5.2 Frontend Web
+- Rotas públicas e privadas
+- Página inicial com opção de acesso por perfil
+- Login para professores e alunos
+- Dashboard de professor
+- Dashboard de aluno
+- Visualização de detalhes de post
+- Navegação entre páginas públicas e privadas
+
+### 5.3 Mobile
+- Tela inicial com seleção de perfil
+- Login de professor
+- Cadastro de professor
+- Dashboard de aluno
+- Dashboard de professor
+- Visualização de detalhes do post
+- Navegação entre telas com React Navigation
+
+## 6. Modelo de Dados
+
+### Usuário
+Os usuários possuem atributos como:
+- nome
+- email
+- senha hash
+- papel (teacher ou student)
+- datas de criação e atualização
+
+### Post
+Os posts podem conter:
+- título
+- conteúdo
+- autor
+- datas de criação e atualização
+
+## 7. Regras de Negócio
+
+Algumas regras aplicadas no backend incluem:
+- E-mails devem ser únicos
+- Senhas são armazenadas com hash
+- Apenas professores podem criar, editar e remover posts
+- Usuários devem estar autenticados para acessar rotas protegidas
+- A busca por posts aceita palavras-chave simples
+
+## 8. Fluxo de Execução
+
+### 8.1 Subir a API
+```bash
+cd blog-api
+npm install
+npm run dev
 ```
 
----
+### 8.2 Subir o Frontend Web
+```bash
+cd blog-frontend/frontend
+npm install
+npm run dev
+```
 
-## 🎯 Arquivos que Precisam Ser Alterados/Criados
-
-### **Para Integrar com Backend**
-- [ ] Criar `src/services/api.js` - Cliente de API
-- [ ] Criar `.env` - Variáveis de ambiente
-- [ ] Modificar screens para usar API em vez de mock data
-
-### **Para Autenticação Real**
-- [ ] Modificar `TeacherLoginScreen.js` - Trocar código por email/senha
-- [ ] Criar serviço de autenticação - JWT tokens
-
-### **Para Features Adicionais**
-- [ ] Criar tela de edição de posts
-- [ ] Criar tela de detalhes de post
-- [ ] Implementar AsyncStorage para persistência
-
----
-
-## 🚀 Como Usar
-
-### **1. Iniciar o App**
+### 8.3 Subir o Mobile
 ```bash
 cd BlogSchoolMobile
 npm install
 npm start
 ```
 
-### **2. Escolher Plataforma**
-- Pressione `a` para Android
-- Pressione `i` para iOS (Mac)
-- Pressione `w` para Web
-- Ou escaneie QR com Expo Go
+## 9. Variáveis de Ambiente
 
-### **3. Testar**
-**Fluxo de Aluno:**
-- Home → Clique "Aluno" → Veja posts → Busque → Filtrar → Logout
+O backend utiliza variáveis de ambiente para configuração de porta, banco de dados e segredo de autenticação.
 
-**Fluxo de Professor:**
-- Home → Clique "Professor" → Digite "prof2024" → Gerencie posts → Logout
+Exemplo:
 
----
-
-## 🎨 Design
-
-### Paleta de Cores
-- **Fundo**: #0f0e0b (muito escuro)
-- **Texto**: #f5f0e8 (claro)
-- **Aluno**: #7eb8f7 (azul)
-- **Professor**: #f7c97e (ouro)
-
-### Responsividade
-- Layouts adaptáveis para qualquer tamanho
-- Touch targets otimizados (44px+)
-- Espaçamento consistente
-- Tipografia fluid
-
----
-
-## 📝 Features Implementadas
-
-✅ Navegação entre telas
-✅ Seleção de papel (Aluno/Professor)
-✅ Dashboard com lista de posts
-✅ Busca de posts funcional
-✅ Filtros por categoria
-✅ Login com código de segurança
-✅ Gerenciamento de posts (CRUD)
-✅ Logout com retorno para Home
-✅ Design system completo
-✅ Componentes reutilizáveis
-✅ Context API para estado global
-✅ Documentação completa
-
----
-
-## 🔄 Próximas Etapas
-
-### Curto Prazo
-1. Testar em emulador/telefone
-2. Integrar com blog-api backend
-3. Implementar autenticação real
-
-### Médio Prazo
-4. Persistência de sessão (AsyncStorage)
-5. Upload de imagens
-6. Tratamento de erros robusto
-
-### Longo Prazo
-7. Notificações push
-8. Modo offline
-9. Compartilhamento de posts
-10. Comentários e likes
-
----
-
-## 📞 Documentação
-
-Para dúvidas, consulte:
-1. **INICIO_RAPIDO.md** - Passo a passo
-2. **GUIA_RAPIDO.md** - Customização
-3. **README.md** - Documentação completa
-4. **CHECKLIST.md** - Status do projeto
-
----
-
-## ✨ Status Final
-
-✅ **100% Completo**
-✅ **Pronto para Usar**
-✅ **Documentado**
-✅ **Testável**
-
-**Você pode:**
-- Abrir o app agora mesmo em um emulador
-- Personalizar cores e dados
-- Integrar com backend depois
-- Compartilhar com usuários
-
----
-
-## 📦 Tecnologia Usada
-
-- **React Native** - Framework mobile
-- **Expo** - Plataforma de compilação
-- **@react-navigation** - Navegação
-- **StyleSheet** - Estilização nativa
-- **Context API** - Estado global
-
----
-
-## 🎁 Bônus: Modificações Rápidas
-
-### Adicionar código de professor
-```javascript
-// TeacherLoginScreen.js, linha ~25
-const validCodes = ['prof2024', 'novo_codigo'];
+```env
+PORT=3000
+MONGODB_URI_LOCAL=mongodb://localhost:27017/blogschool
+MONGODB_URI=mongodb://localhost:27017/blogschool
+AUTH_SECRET=blogschool-dev-secret
 ```
 
-### Mudar cores
-```javascript
-// colors.js
-export const colors = {
-  bg: '#sua-cor',
-  ink: '#sua-cor',
-  // ...
-};
+No frontend web, a integração com a API pode ser ajustada com a variável:
+
+```env
+VITE_API_URL=http://localhost:3000
 ```
 
-### Adicionar novos posts
-```javascript
-// StudentDashboardScreen.js, linha ~30
-const mockPosts = [
-  { id: 1, title: 'Novo', ... },
-  // Adicionar aqui
-];
+## 10. Endpoints da API
+
+### Usuários
+```text
+POST /users/register
+POST /users/login
+GET /users
+POST /users
+GET /users/:id
+PUT /users/:id
+DELETE /users/:id
 ```
 
----
+### Posts
+```text
+GET /posts
+GET /posts/:id
+GET /posts/search
+POST /posts
+PUT /posts/:id
+DELETE /posts/:id
+```
 
-## 🏆 Conclusão
+### Comentários
+```text
+GET /posts/:id/comments
+POST /posts/:id/comments
+PUT /posts/:id/comments/:commentId
+DELETE /posts/:id/comments/:commentId
+```
 
-O **BlogSchool Mobile** está pronto para:
-- ✅ Desenvolvimento contínuo
-- ✅ Testes com usuários
-- ✅ Integração com backend
-- ✅ Deploy em App Store/Play Store
+## 11. Considerações de Desenvolvimento
 
-**Aproveite o código! 🚀**
+Este projeto representa uma base sólida para:
+- estudos de arquitetura full stack
+- implementação de APIs REST
+- integração entre backend, frontend e mobile
+- organização de código por camada
+- prática de autenticação e autorização
 
----
+## 12. Melhorias Futuras
 
-**Projeto**: BlogSchool Mobile  
-**Versão**: 1.0  
-**Framework**: React Native + Expo  
-**Status**: ✅ Completo
+Algumas evoluções recomendadas:
+- autenticação com refresh token
+- upload de imagens para posts
+- paginação e filtros avançados
+- testes end-to-end
+- persistência de sessão no mobile
+- painel administrativo mais completo
+
+## 13. Resumo Executivo
+
+O BlogSchool é um projeto completo para demonstrar a construção de uma aplicação moderna em três camadas: backend, frontend web e mobile. A solução já apresenta uma estrutura funcional com autenticação, gerenciamento de conteúdo, navegação e integração entre os módulos, servindo como base para evolução contínua e aprendizado técnico.
